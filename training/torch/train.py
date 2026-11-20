@@ -88,6 +88,8 @@ def main() -> None:
     parser.add_argument("--dim", type=int, default=32)
     parser.add_argument("--hidden", type=int, default=64)
     parser.add_argument("--steps", type=int, default=20000)
+    parser.add_argument("--prefix", type=float, default=0.25, help="share of single words that are cut")
+    parser.add_argument("--typo", type=float, default=0.25, help="share of single words that are misspelled")
     parser.add_argument("--batch", type=int, default=1024)
     parser.add_argument("--lr", type=float, default=3e-3)
     parser.add_argument("--seed", type=int, default=1)
@@ -118,7 +120,7 @@ def main() -> None:
     running = 0.0
     for step in range(1, args.steps + 1):
         model.quantize = args.bits == 6 and step > args.steps - args.qat_steps
-        batch = data.sample(args.batch)
+        batch = data.sample(args.batch, args.prefix, args.typo)
         logits = model(
             batch.rows.to(device), batch.offsets.to(device), batch.word_query.to(device), args.batch
         )

@@ -36,6 +36,10 @@ FILLER_BEFORE = [
 FILLER_AFTER = ["icon", "icons", "button", "symbol", "sign", "logo", "image", "picture", "item", "thing"]
 
 
+NOISY_IDENTITY_WEIGHT = 0.5
+"""Share of the target weight that the intended word gets when the typed word is cut or misspelled."""
+
+
 @dataclass
 class Batch:
     rows: torch.Tensor
@@ -79,6 +83,7 @@ class TrainingData:
     def __init__(self, file: Path, rows: int, seed: int = 0):
         data = json.loads(file.read_text())
         self.vocabulary: list[str] = data["vocabulary"]
+        self.identity = {word: index for index, word in enumerate(self.vocabulary)}
         self.rows = rows
         self.rng = random.Random(seed)
         self.texts = [query["text"].split(" ") for query in data["queries"]]
@@ -98,6 +103,7 @@ class TrainingData:
         self.cumulative = np.cumsum(weights)
 
     def _words(self, index: int, prefix: float, typo: float) -> list[str]:
+        """Return the words of one example, with typing noise and filler words."""
         rng = self.rng
         text = self.texts[index]
         if len(text) == 1:
@@ -124,11 +130,17 @@ class TrainingData:
             self.cumulative, np.random.default_rng(self.rng.randrange(1 << 30)).random(size)
         )
         picks = np.minimum(picks, len(self.texts) - 1)
-        rows, offsets, owner = self.encode([self._words(int(index), prefix, typo) for index in picks])
-        return Batch(
-            rows,
-            offsets,
-            owner,
-            torch.from_numpy(self.target_ids[picks]),
-            torch.from_numpy(self.target_weights[picks]),
-        )
+        queries = [self._words(int(index), prefix, typo) for index in picks]
+        rows, offsets, owner = self.encode(queries)
+        target_ids = self.target_ids[picks]
+        target_weights = self.target_weights[picks].copy()
+        for row, (index, words) in enumerate(zip(picks, queries, strict=True)):
+            text = self.texts[int(index)]
+            identity = self.identity.get(text[0]) if len(text) == 1 else None
+            if identity is not None and text[0] not in words:
+                # The typed word is cut or misspelled: the intended word is the main target
+                column = np.flatnonzero(target_ids[row] == identity)
+                if len(column):
+                    target_weights[row] *= 1 - NOISY_IDENTITY_WEIGHT
+                    target_weights[row, column[0]] += NOISY_IDENTITY_WEIGHT
+        return Batch(rows, offsets, owner, torch.from_numpy(target_ids), torch.from_numpy(target_weights))
