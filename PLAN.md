@@ -288,7 +288,7 @@ The status of the milestones on 2026-11-20 is:
 | M2 | The runtime, `evaluate` and `promote` are complete. No candidate passes the ship gate, so no model is promoted. |
 | M3 | Complete. The review page is empty until test set 4 exists. |
 | M4 | Not started. It needs the Claude script to run. |
-| M5 | Not started. |
+| M5 | Complete. The look-alike pairs lower the scores, so training does not read them. |
 | M6 | Not started. |
 
 ## Risks

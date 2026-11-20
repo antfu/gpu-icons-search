@@ -61,6 +61,19 @@ Other measurements of the candidate:
 
 `training/data/sweep.json` compares three model sizes at 8,000 steps. The scores rise with the size up to the 1 MB limit.
 
+## Stage 3: look-alike icons
+
+`pnpm -C training run lookalike` renders 137,311 icons of 115 single-color interface icon sets and finds 140,351 pairs that look alike but have different names. Examples are `add` and `plus`, `filter` and `funnel`, and `view-dashboard` and `layout-dashboard`.
+
+The ablation added the name words of each pair to the tag table. The scores went down at every similarity threshold, so training does not read the pairs:
+
+| Tag table | alias | transfer |
+| --- | ---: | ---: |
+| Tags only | 69.2% | 33.6% |
+| With pairs of similarity 0.96 or more | 66.8% | 32.0% |
+| With pairs of similarity 0.93 or more | 65.8% | 31.0% |
+| With pairs of similarity 0.90 or more | 65.5% | 30.3% |
+
 ## Decision point
 
 The plan asks for a discussion if the model does not clearly win against `fzf+table` on test sets 2 to 4. The model wins on `typing`. It does not win on `transfer`, and it scores lower on `alias`. The tags and the teacher model limit both methods: the training targets themselves reach about 69% on `alias` and 36% on `transfer`.
