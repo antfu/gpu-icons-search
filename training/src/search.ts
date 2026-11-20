@@ -57,12 +57,12 @@ export class IconSearch {
   /**
    * The reference integration. The typed text comes first, with fuzzy matching as in Icones.
    * Then each predicted word follows in score order, as an exact match.
+   * Each result names the prediction that found it. A match of the typed text has none.
    */
-  tiered(query: string, predictions: Prediction[]): string[] {
+  tieredWithReasons(query: string, predictions: Prediction[]): { icon: string, via?: Prediction }[] {
     const parts = query.trim().toLowerCase().split(' ').filter(Boolean)
-    const results = this.icones(query)
-    const seen = new Set(results)
-    const merged = [...results]
+    const merged: { icon: string, via?: Prediction }[] = this.icones(query).map(icon => ({ icon }))
+    const seen = new Set(merged.map(result => result.icon))
     for (const prediction of predictions) {
       const index = parts.indexOf(prediction.from)
       const pattern = index < 0
@@ -73,10 +73,15 @@ export class IconSearch {
       for (const icon of this.find(pattern, true)) {
         if (!seen.has(icon)) {
           seen.add(icon)
-          merged.push(icon)
+          merged.push({ icon, via: prediction })
         }
       }
     }
     return merged
+  }
+
+  /** The icon names of `tieredWithReasons`, in the same order */
+  tiered(query: string, predictions: Prediction[]): string[] {
+    return this.tieredWithReasons(query, predictions).map(result => result.icon)
   }
 }

@@ -1,4 +1,5 @@
 import type { Prediction } from '../../src/types'
+import type { BenchCase } from './bench/cases'
 import type { Report } from './bench/run'
 import { createHash } from 'node:crypto'
 import { readFileSync } from 'node:fs'
@@ -7,7 +8,7 @@ import process from 'node:process'
 import { brotliCompressSync, gzipSync } from 'node:zlib'
 import { createPredictor } from '../../src/index'
 import { GpuModel } from '../../src/runtime'
-import { baselineMethods, loadCases, predictorMethod, printReport, runBenchmark } from './bench/run'
+import { baselineMethods, loadCases, predictorMethod, printReport, runBenchmark, SCREEN } from './bench/run'
 import { requestNodeDevice, useSoftwareVulkanIfNeeded } from './gpu'
 import { compareWithFixtures, gpuTop, referenceTop, TOLERANCE } from './parity'
 import { cacheDir, writeJSON } from './paths'
@@ -28,6 +29,8 @@ export interface Evaluation {
   /** Median time of one warm `predict` call in milliseconds, on this adapter */
   latencyMs: number
   bench: Report
+  /** The cases that the model did not find, with a flag if the baseline `fzf+alias` found them */
+  misses: (BenchCase & { baselineFound: boolean })[]
 }
 
 function median(values: number[]): number {
@@ -66,10 +69,16 @@ async function main(): Promise<void> {
   }
   predictor.dispose()
 
+  const ranks = new Map<string, number[]>()
   const bench = runBenchmark([
     ...baselineMethods(),
     predictorMethod(MODEL_METHOD, query => predictions.get(query) ?? []),
-  ], cases)
+  ], cases, ranks)
+  const misses = cases.flatMap((test, index) => ranks.get(MODEL_METHOD)![index]! > SCREEN
+    ? [
+        { ...test, baselineFound: ranks.get('fzf+alias')![index]! <= SCREEN },
+      ]
+    : [])
   const evaluation: Evaluation = {
     sha256: createHash('sha256').update(file).digest('hex'),
     adapter,
@@ -77,6 +86,7 @@ async function main(): Promise<void> {
     bytes: { raw: file.byteLength, gzip: gzipSync(file).byteLength, brotli: brotliCompressSync(file).byteLength },
     latencyMs: Number(median(times).toFixed(2)),
     bench,
+    misses,
   }
   writeJSON(join(dir, 'evaluation.json'), evaluation)
 

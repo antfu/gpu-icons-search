@@ -11,7 +11,7 @@ import { benchFile, loadAliasGroups } from './build'
 import { isCorrect } from './cases'
 
 /** A result counts as found if it is in the first results that fit on one screen */
-const SCREEN = 50
+export const SCREEN = 50
 
 /** Rank that marks a case with no correct result */
 const NOT_FOUND = Number.POSITIVE_INFINITY
@@ -85,8 +85,11 @@ function firstCorrect(icons: string[], test: BenchCase): number {
     : index + 1
 }
 
-/** Run each method on each case, and score each test set */
-export function runBenchmark(methods: Method[], cases: BenchCase[] = loadCases()): Report {
+/**
+ * Run each method on each case, and score each test set.
+ * If `ranks` is given, it receives the rank of the first correct icon of each case, per method.
+ */
+export function runBenchmark(methods: Method[], cases: BenchCase[] = loadCases(), ranks?: Map<string, number[]>): Report {
   const searches = new Map<string, IconSearch>()
   for (const set of loadIconSets()) {
     if (cases.some(test => test.prefix === set.prefix))
@@ -95,7 +98,7 @@ export function runBenchmark(methods: Method[], cases: BenchCase[] = loadCases()
   const report: Report = {}
   for (const method of methods) {
     const results = new Map<string, { all: string[], related: string[] }>()
-    const ranks = cases.map((test) => {
+    const found = cases.map((test) => {
       const key = `${test.prefix}\n${test.query}`
       let lists = results.get(key)
       if (!lists) {
@@ -109,13 +112,14 @@ export function runBenchmark(methods: Method[], cases: BenchCase[] = loadCases()
       }
       return Math.min(firstCorrect(lists.all, test), firstCorrect(lists.related, test))
     })
+    ranks?.set(method.name, found)
     const scores: Report[string] = {}
     for (const set of BENCH_SETS) {
       const index = cases.flatMap((test, i) => test.set === set
         ? [i]
         : [])
       if (index.length > 0)
-        scores[set] = scoreCases(index.map(i => cases[i]!), index.map(i => ranks[i]!))
+        scores[set] = scoreCases(index.map(i => cases[i]!), index.map(i => found[i]!))
     }
     const parts = Object.values(scores)
     scores.overall = {
