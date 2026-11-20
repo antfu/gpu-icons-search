@@ -1,0 +1,383 @@
+{"set":"written","prefix":"solar","query":"design tool","icon":"figma-outline"}
+{"set":"written","prefix":"solar","query":"ui prototyping","icon":"figma-outline"}
+{"set":"written","prefix":"solar","query":"timer","icon":"stopwatch-linear"}
+{"set":"written","prefix":"solar","query":"lap time","icon":"stopwatch-linear"}
+{"set":"written","prefix":"solar","query":"icon for measuring elapsed time","icon":"stopwatch-linear"}
+{"set":"written","prefix":"solar","query":"package","icon":"box-bold"}
+{"set":"written","prefix":"solar","query":"parcel","icon":"box-bold"}
+{"set":"written","prefix":"solar","query":"solid icon for a shipping package","icon":"box-bold"}
+{"set":"written","prefix":"solar","query":"gym","icon":"dumbbells-outline"}
+{"set":"written","prefix":"solar","query":"weightlifting","icon":"dumbbells-outline"}
+{"set":"written","prefix":"solar","query":"icon for fitness and workouts","icon":"dumbbells-outline"}
+{"set":"written","prefix":"solar","query":"couch","icon":"sofa-outline"}
+{"set":"written","prefix":"solar","query":"living room","icon":"sofa-outline"}
+{"set":"written","prefix":"solar","query":"icon for furniture or lounge seating","icon":"sofa-outline"}
+{"set":"written","prefix":"solar","query":"label","icon":"tag-linear"}
+{"set":"written","prefix":"solar","query":"price","icon":"tag-linear"}
+{"set":"written","prefix":"solar","query":"icon for labeling or pricing items","icon":"tag-linear"}
+{"set":"written","prefix":"solar","query":"package","icon":"box-outline"}
+{"set":"written","prefix":"solar","query":"delivery","icon":"box-outline"}
+{"set":"written","prefix":"solar","query":"outlined icon for a parcel or shipment","icon":"box-outline"}
+{"set":"written","prefix":"solar","query":"wardrobe","icon":"closet-linear"}
+{"set":"written","prefix":"solar","query":"cupboard","icon":"closet-linear"}
+{"set":"written","prefix":"solar","query":"icon for clothing storage furniture","icon":"closet-linear"}
+{"set":"written","prefix":"tabler","query":"fungus","icon":"mushroom-filled"}
+{"set":"written","prefix":"tabler","query":"toadstool","icon":"mushroom-filled"}
+{"set":"written","prefix":"tabler","query":"solid icon of a forest fungus","icon":"mushroom-filled"}
+{"set":"written","prefix":"tabler","query":"cursor favorite","icon":"pointer-star"}
+{"set":"written","prefix":"tabler","query":"click bookmark","icon":"pointer-star"}
+{"set":"written","prefix":"tabler","query":"vercel","icon":"brand-zeit"}
+{"set":"written","prefix":"tabler","query":"triangle logo","icon":"brand-zeit"}
+{"set":"written","prefix":"tabler","query":"adobe design","icon":"xd"}
+{"set":"written","prefix":"tabler","query":"prototype app","icon":"xd"}
+{"set":"written","prefix":"tabler","query":"logo of an adobe ui design app","icon":"xd"}
+{"set":"written","prefix":"tabler","query":"more options","icon":"dots-filled"}
+{"set":"written","prefix":"tabler","query":"ellipsis","icon":"dots-filled"}
+{"set":"written","prefix":"tabler","query":"three solid circles for more menu","icon":"dots-filled"}
+{"set":"written","prefix":"tabler","query":"storage box","icon":"archive-filled"}
+{"set":"written","prefix":"tabler","query":"file away","icon":"archive-filled"}
+{"set":"written","prefix":"tabler","query":"solid icon for storing old items","icon":"archive-filled"}
+{"set":"written","prefix":"tabler","query":"find office","icon":"building-search"}
+{"set":"written","prefix":"tabler","query":"property lookup","icon":"building-search"}
+{"set":"written","prefix":"tabler","query":"icon for searching real estate locations","icon":"building-search"}
+{"set":"written","prefix":"tabler","query":"softball","icon":"ball-baseball"}
+{"set":"written","prefix":"tabler","query":"sports","icon":"ball-baseball"}
+{"set":"written","prefix":"tabler","query":"find label","icon":"tag-search"}
+{"set":"written","prefix":"tabler","query":"price lookup","icon":"tag-search"}
+{"set":"written","prefix":"tabler","query":"icon for searching by labels","icon":"tag-search"}
+{"set":"written","prefix":"tabler","query":"underpass","icon":"building-tunnel"}
+{"set":"written","prefix":"tabler","query":"road passage","icon":"building-tunnel"}
+{"set":"written","prefix":"tabler","query":"icon for an underground road passage","icon":"building-tunnel"}
+{"set":"written","prefix":"tabler","query":"no swap","icon":"exchange-off"}
+{"set":"written","prefix":"tabler","query":"transfer disabled","icon":"exchange-off"}
+{"set":"written","prefix":"tabler","query":"icon for disabled trading or swapping","icon":"exchange-off"}
+{"set":"written","prefix":"ri","query":"messenger app","icon":"telegram-fill"}
+{"set":"written","prefix":"ri","query":"paper plane","icon":"telegram-fill"}
+{"set":"written","prefix":"ri","query":"music streaming","icon":"soundcloud-fill"}
+{"set":"written","prefix":"ri","query":"audio platform","icon":"soundcloud-fill"}
+{"set":"written","prefix":"ri","query":"logo of an audio sharing service","icon":"soundcloud-fill"}
+{"set":"written","prefix":"ri","query":"blade","icon":"sword-fill"}
+{"set":"written","prefix":"ri","query":"weapon","icon":"sword-fill"}
+{"set":"written","prefix":"ri","query":"annotate","icon":"markup-fill"}
+{"set":"written","prefix":"ri","query":"draw notes","icon":"markup-fill"}
+{"set":"written","prefix":"ri","query":"icon for annotating or marking images","icon":"markup-fill"}
+{"set":"written","prefix":"ri","query":"high definition","icon":"hd-fill"}
+{"set":"written","prefix":"ri","query":"video quality","icon":"hd-fill"}
+{"set":"written","prefix":"ri","query":"badge for high resolution video","icon":"hd-fill"}
+{"set":"written","prefix":"ri","query":"linux distro","icon":"centos-fill"}
+{"set":"written","prefix":"ri","query":"logo of a linux operating system","icon":"centos-fill"}
+{"set":"written","prefix":"material-symbols","query":"wrist clock","icon":"watch"}
+{"set":"written","prefix":"material-symbols","query":"wearable","icon":"watch"}
+{"set":"written","prefix":"material-symbols","query":"purchases","icon":"orders"}
+{"set":"written","prefix":"material-symbols","query":"package box","icon":"orders"}
+{"set":"written","prefix":"material-symbols","query":"icon for viewing customer purchases","icon":"orders"}
+{"set":"written","prefix":"material-symbols","query":"find field","icon":"input-search"}
+{"set":"written","prefix":"material-symbols","query":"query bar","icon":"input-search"}
+{"set":"written","prefix":"material-symbols","query":"camera warning","icon":"videocam-alert"}
+{"set":"written","prefix":"material-symbols","query":"recording error","icon":"videocam-alert"}
+{"set":"written","prefix":"material-symbols","query":"icon for camera recording problem warning","icon":"videocam-alert"}
+{"set":"written","prefix":"material-symbols","query":"salt level","icon":"salinity-rounded"}
+{"set":"written","prefix":"material-symbols","query":"water salt","icon":"salinity-rounded"}
+{"set":"written","prefix":"material-symbols","query":"lightning bolt","icon":"flash-on"}
+{"set":"written","prefix":"material-symbols","query":"camera light","icon":"flash-on"}
+{"set":"written","prefix":"material-symbols","query":"turn camera bright light active","icon":"flash-on"}
+{"set":"written","prefix":"material-symbols","query":"workout","icon":"exercise-sharp"}
+{"set":"written","prefix":"material-symbols","query":"fitness","icon":"exercise-sharp"}
+{"set":"written","prefix":"material-symbols","query":"icon for workout or fitness activity","icon":"exercise-sharp"}
+{"set":"written","prefix":"material-symbols","query":"package","icon":"box-sharp"}
+{"set":"written","prefix":"material-symbols","query":"container","icon":"box-sharp"}
+{"set":"written","prefix":"material-symbols","query":"hammer","icon":"hardware-rounded"}
+{"set":"written","prefix":"material-symbols","query":"tools","icon":"hardware-rounded"}
+{"set":"written","prefix":"material-symbols","query":"icon for tools and repairs","icon":"hardware-rounded"}
+{"set":"written","prefix":"material-symbols","query":"storage transfer","icon":"drive-export"}
+{"set":"written","prefix":"material-symbols","query":"send files","icon":"drive-export"}
+{"set":"written","prefix":"material-symbols","query":"icon for moving files out of storage","icon":"drive-export"}
+{"set":"written","prefix":"material-symbols","query":"future events","icon":"upcoming"}
+{"set":"written","prefix":"material-symbols","query":"scheduled","icon":"upcoming"}
+{"set":"written","prefix":"material-symbols","query":"icon for scheduled future events","icon":"upcoming"}
+{"set":"written","prefix":"mdi","query":"spreadsheet","icon":"file-excel"}
+{"set":"written","prefix":"mdi","query":"xls document","icon":"file-excel"}
+{"set":"written","prefix":"mdi","query":"icon for a microsoft spreadsheet document","icon":"file-excel"}
+{"set":"written","prefix":"mdi","query":"add funnel","icon":"filter-plus"}
+{"set":"written","prefix":"mdi","query":"new sort rule","icon":"filter-plus"}
+{"set":"written","prefix":"mdi","query":"icon for adding a new funnel criterion","icon":"filter-plus"}
+{"set":"written","prefix":"mdi","query":"modify bill","icon":"invoice-edit"}
+{"set":"written","prefix":"mdi","query":"receipt pencil","icon":"invoice-edit"}
+{"set":"written","prefix":"mdi","query":"icon for changing a billing document","icon":"invoice-edit"}
+{"set":"written","prefix":"mdi","query":"data table","icon":"google-spreadsheet"}
+{"set":"written","prefix":"mdi","query":"grid document","icon":"google-spreadsheet"}
+{"set":"written","prefix":"mdi","query":"icon for online table document","icon":"google-spreadsheet"}
+{"set":"written","prefix":"mdi","query":"punctuation","icon":"comma-circle"}
+{"set":"written","prefix":"mdi","query":"round mark","icon":"comma-circle"}
+{"set":"written","prefix":"mdi","query":"jewish temple","icon":"synagogue"}
+{"set":"written","prefix":"mdi","query":"worship","icon":"synagogue"}
+{"set":"written","prefix":"mdi","query":"booking pass","icon":"ticket-confirmation"}
+{"set":"written","prefix":"mdi","query":"event admission","icon":"ticket-confirmation"}
+{"set":"written","prefix":"mdi","query":"star of david","icon":"hexagram"}
+{"set":"written","prefix":"mdi","query":"six point star","icon":"hexagram"}
+{"set":"written","prefix":"mdi","query":"icon for six pointed star","icon":"hexagram"}
+{"set":"written","prefix":"mdi","query":"farm barn","icon":"home-silo"}
+{"set":"written","prefix":"mdi","query":"grain storage","icon":"home-silo"}
+{"set":"written","prefix":"mdi","query":"icon for farm grain storage building","icon":"home-silo"}
+{"set":"written","prefix":"mdi","query":"car safety","icon":"seatbelt"}
+{"set":"written","prefix":"mdi","query":"buckle up","icon":"seatbelt"}
+{"set":"written","prefix":"mdi","query":"icon for car passenger safety restraint","icon":"seatbelt"}
+{"set":"written","prefix":"mdi","query":"bullets","icon":"ammunition"}
+{"set":"written","prefix":"mdi","query":"gun rounds","icon":"ammunition"}
+{"set":"written","prefix":"mdi","query":"icon for firearm bullets","icon":"ammunition"}
+{"set":"written","prefix":"solar","query":"love","icon":"hearts-linear"}
+{"set":"written","prefix":"solar","query":"favorites","icon":"hearts-linear"}
+{"set":"written","prefix":"solar","query":"icon for love or liking","icon":"hearts-linear"}
+{"set":"written","prefix":"solar","query":"programming","icon":"code-broken"}
+{"set":"written","prefix":"solar","query":"html tags","icon":"code-broken"}
+{"set":"written","prefix":"solar","query":"icon for developer programming tags","icon":"code-broken"}
+{"set":"written","prefix":"solar","query":"notebook computer","icon":"laptop-broken"}
+{"set":"written","prefix":"solar","query":"portable pc","icon":"laptop-broken"}
+{"set":"written","prefix":"ri","query":"javascript runtime","icon":"nodejs-fill"}
+{"set":"written","prefix":"ri","query":"logo of a server javascript platform","icon":"nodejs-fill"}
+{"set":"written","prefix":"ri","query":"navigation arrow","icon":"direction-fill"}
+{"set":"written","prefix":"ri","query":"route sign","icon":"direction-fill"}
+{"set":"written","prefix":"ri","query":"icon for turn-by-turn route guidance","icon":"direction-fill"}
+{"set":"written","prefix":"ri","query":"google framework","icon":"angularjs-fill"}
+{"set":"written","prefix":"ri","query":"frontend logo","icon":"angularjs-fill"}
+{"set":"written","prefix":"ri","query":"send file","icon":"upload-fill"}
+{"set":"written","prefix":"ri","query":"icon for sending files to cloud","icon":"upload-fill"}
+{"set":"written","prefix":"ri","query":"view","icon":"eye-fill"}
+{"set":"written","prefix":"ri","query":"show password","icon":"eye-fill"}
+{"set":"written","prefix":"ri","query":"icon for viewing or revealing content","icon":"eye-fill"}
+{"set":"written","prefix":"iconoir","query":"growth trend","icon":"graph-up"}
+{"set":"written","prefix":"iconoir","query":"rising chart","icon":"graph-up"}
+{"set":"written","prefix":"iconoir","query":"icon showing increasing statistics over time","icon":"graph-up"}
+{"set":"written","prefix":"iconoir","query":"export","icon":"share-ios"}
+{"set":"written","prefix":"iconoir","query":"send to","icon":"share-ios"}
+{"set":"written","prefix":"iconoir","query":"apple style button for sending content","icon":"share-ios"}
+{"set":"written","prefix":"iconoir","query":"padlock","icon":"lock"}
+{"set":"written","prefix":"iconoir","query":"secure","icon":"lock"}
+{"set":"written","prefix":"iconoir","query":"icon for locked or protected content","icon":"lock"}
+{"set":"written","prefix":"iconoir","query":"rubber","icon":"erase"}
+{"set":"written","prefix":"iconoir","query":"clear drawing","icon":"erase"}
+{"set":"written","prefix":"iconoir","query":"tool for wiping out drawn marks","icon":"erase"}
+{"set":"written","prefix":"iconoir","query":"close box","icon":"x-square"}
+{"set":"written","prefix":"iconoir","query":"cancel","icon":"x-square"}
+{"set":"written","prefix":"iconoir","query":"boxed cross for closing or deleting","icon":"x-square"}
+{"set":"written","prefix":"iconoir","query":"nature guide","icon":"ecology-book"}
+{"set":"written","prefix":"iconoir","query":"green leaf manual","icon":"ecology-book"}
+{"set":"written","prefix":"iconoir","query":"reading material about environment and plants","icon":"ecology-book"}
+{"set":"written","prefix":"iconoir","query":"photo editing","icon":"adobe-lightroom"}
+{"set":"written","prefix":"iconoir","query":"lr app","icon":"adobe-lightroom"}
+{"set":"written","prefix":"iconoir","query":"logo of photo editing software","icon":"adobe-lightroom"}
+{"set":"written","prefix":"iconoir","query":"wild dog","icon":"wolf"}
+{"set":"written","prefix":"iconoir","query":"howling animal","icon":"wolf"}
+{"set":"written","prefix":"iconoir","query":"wild canine animal head illustration","icon":"wolf"}
+{"set":"written","prefix":"iconoir","query":"hide panel","icon":"sidebar-collapse"}
+{"set":"written","prefix":"iconoir","query":"close menu","icon":"sidebar-collapse"}
+{"set":"written","prefix":"iconoir","query":"baby pram","icon":"stroller"}
+{"set":"written","prefix":"iconoir","query":"pushchair","icon":"stroller"}
+{"set":"written","prefix":"iconoir","query":"icon for infant transport carriage","icon":"stroller"}
+{"set":"written","prefix":"iconoir","query":"cooling","icon":"air-conditioner"}
+{"set":"written","prefix":"iconoir","query":"ac unit","icon":"air-conditioner"}
+{"set":"written","prefix":"iconoir","query":"icon for room cooling appliance","icon":"air-conditioner"}
+{"set":"written","prefix":"lucide","query":"database rack","icon":"server"}
+{"set":"written","prefix":"lucide","query":"hosting","icon":"server"}
+{"set":"written","prefix":"lucide","query":"icon for backend computing hardware","icon":"server"}
+{"set":"written","prefix":"lucide","query":"enlarge photo","icon":"image-upscale"}
+{"set":"written","prefix":"lucide","query":"resize picture","icon":"image-upscale"}
+{"set":"written","prefix":"lucide","query":"icon for increasing picture resolution","icon":"image-upscale"}
+{"set":"written","prefix":"lucide","query":"filled graph","icon":"chart-area"}
+{"set":"written","prefix":"lucide","query":"analytics","icon":"chart-area"}
+{"set":"written","prefix":"lucide","query":"filled line graph for data trends","icon":"chart-area"}
+{"set":"written","prefix":"lucide","query":"remove event","icon":"calendar-minus"}
+{"set":"written","prefix":"lucide","query":"delete date","icon":"calendar-minus"}
+{"set":"written","prefix":"lucide","query":"chat bubble","icon":"message-circle"}
+{"set":"written","prefix":"lucide","query":"comment","icon":"message-circle"}
+{"set":"written","prefix":"lucide","query":"round speech bubble for conversations","icon":"message-circle"}
+{"set":"written","prefix":"lucide","query":"network settings","icon":"wifi-cog"}
+{"set":"written","prefix":"lucide","query":"wireless config","icon":"wifi-cog"}
+{"set":"written","prefix":"lucide","query":"icon for wireless connection preferences","icon":"wifi-cog"}
+{"set":"written","prefix":"lucide","query":"plant based","icon":"vegan"}
+{"set":"written","prefix":"lucide","query":"label for food without animal products","icon":"vegan"}
+{"set":"written","prefix":"lucide","query":"globe","icon":"earth"}
+{"set":"written","prefix":"lucide","query":"planet","icon":"earth"}
+{"set":"written","prefix":"lucide","query":"icon showing the world globe","icon":"earth"}
+{"set":"written","prefix":"lucide","query":"fork knife","icon":"utensils"}
+{"set":"written","prefix":"lucide","query":"restaurant","icon":"utensils"}
+{"set":"written","prefix":"lucide","query":"icon for dining or food menu","icon":"utensils"}
+{"set":"written","prefix":"lucide","query":"no alcohol","icon":"beer-off"}
+{"set":"written","prefix":"lucide","query":"sober","icon":"beer-off"}
+{"set":"written","prefix":"lucide","query":"icon for alcohol-free or no drinking","icon":"beer-off"}
+{"set":"written","prefix":"lucide","query":"mad emoji","icon":"face-angry"}
+{"set":"written","prefix":"lucide","query":"furious","icon":"face-angry"}
+{"set":"written","prefix":"carbon","query":"worldwide permit","icon":"license-global"}
+{"set":"written","prefix":"carbon","query":"international certificate","icon":"license-global"}
+{"set":"written","prefix":"carbon","query":"icon for an international usage permit","icon":"license-global"}
+{"set":"written","prefix":"carbon","query":"vector database","icon":"logo-milvus"}
+{"set":"written","prefix":"carbon","query":"brand mark","icon":"logo-milvus"}
+{"set":"written","prefix":"carbon","query":"brand mark of a vector database","icon":"logo-milvus"}
+{"set":"written","prefix":"carbon","query":"ibm assistant","icon":"watsonx-ai"}
+{"set":"written","prefix":"carbon","query":"machine learning","icon":"watsonx-ai"}
+{"set":"written","prefix":"carbon","query":"icon for an ibm artificial intelligence platform","icon":"watsonx-ai"}
+{"set":"written","prefix":"carbon","query":"winter","icon":"snowflake"}
+{"set":"written","prefix":"carbon","query":"icon for cold weather or freezing","icon":"snowflake"}
+{"set":"written","prefix":"carbon","query":"grid menu","icon":"apps"}
+{"set":"written","prefix":"carbon","query":"launcher","icon":"apps"}
+{"set":"written","prefix":"carbon","query":"engagement","icon":"interactions"}
+{"set":"written","prefix":"carbon","query":"user activity","icon":"interactions"}
+{"set":"written","prefix":"carbon","query":"icon for user engagement and activity","icon":"interactions"}
+{"set":"written","prefix":"carbon","query":"freezing rain","icon":"ice-accretion"}
+{"set":"written","prefix":"carbon","query":"icing","icon":"ice-accretion"}
+{"set":"written","prefix":"carbon","query":"handle with care","icon":"fragile"}
+{"set":"written","prefix":"carbon","query":"broken glass","icon":"fragile"}
+{"set":"written","prefix":"carbon","query":"icon for delicate breakable shipment items","icon":"fragile"}
+{"set":"written","prefix":"carbon","query":"vm server","icon":"virtual-machine"}
+{"set":"written","prefix":"carbon","query":"emulation","icon":"virtual-machine"}
+{"set":"written","prefix":"carbon","query":"icon for an emulated computer instance","icon":"virtual-machine"}
+{"set":"written","prefix":"carbon","query":"translate","icon":"language"}
+{"set":"written","prefix":"carbon","query":"localization","icon":"language"}
+{"set":"written","prefix":"carbon","query":"icon for changing the interface tongue","icon":"language"}
+{"set":"written","prefix":"carbon","query":"word file","icon":"doc"}
+{"set":"written","prefix":"carbon","query":"document","icon":"doc"}
+{"set":"written","prefix":"carbon","query":"icon for a word processing file","icon":"doc"}
+{"set":"written","prefix":"ion","query":"triangle","icon":"prism"}
+{"set":"written","prefix":"ion","query":"light refraction","icon":"prism"}
+{"set":"written","prefix":"ion","query":"icon of a glass refracting light","icon":"prism"}
+{"set":"written","prefix":"ion","query":"gamepad","icon":"game-controller"}
+{"set":"written","prefix":"ion","query":"gaming","icon":"game-controller"}
+{"set":"written","prefix":"ion","query":"icon for video games and playing","icon":"game-controller"}
+{"set":"written","prefix":"ion","query":"dark mode","icon":"contrast-outline"}
+{"set":"written","prefix":"ion","query":"brightness","icon":"contrast-outline"}
+{"set":"written","prefix":"ion","query":"icon for toggling light and dark themes","icon":"contrast-outline"}
+{"set":"written","prefix":"ion","query":"design tool","icon":"logo-figma"}
+{"set":"written","prefix":"ion","query":"prototyping","icon":"logo-figma"}
+{"set":"written","prefix":"ion","query":"award","icon":"ribbon-sharp"}
+{"set":"written","prefix":"ion","query":"badge","icon":"ribbon-sharp"}
+{"set":"written","prefix":"ion","query":"icon for an award or achievement","icon":"ribbon-sharp"}
+{"set":"written","prefix":"ion","query":"office building","icon":"business-sharp"}
+{"set":"written","prefix":"ion","query":"company","icon":"business-sharp"}
+{"set":"written","prefix":"ion","query":"group","icon":"people-outline"}
+{"set":"written","prefix":"ion","query":"users","icon":"people-outline"}
+{"set":"written","prefix":"ion","query":"icon for a group of persons","icon":"people-outline"}
+{"set":"written","prefix":"ion","query":"death","icon":"skull"}
+{"set":"written","prefix":"ion","query":"danger","icon":"skull"}
+{"set":"written","prefix":"ion","query":"icon for death, poison or danger","icon":"skull"}
+{"set":"written","prefix":"ion","query":"square","icon":"stop"}
+{"set":"written","prefix":"ion","query":"halt","icon":"stop"}
+{"set":"written","prefix":"ion","query":"icon for halting media playback","icon":"stop"}
+{"set":"written","prefix":"ion","query":"paper plane","icon":"send-sharp"}
+{"set":"written","prefix":"ion","query":"submit message","icon":"send-sharp"}
+{"set":"written","prefix":"bi","query":"broken love","icon":"heartbreak-fill"}
+{"set":"written","prefix":"bi","query":"breakup","icon":"heartbreak-fill"}
+{"set":"written","prefix":"heroicons","query":"delivery","icon":"truck"}
+{"set":"written","prefix":"heroicons","query":"shipping","icon":"truck"}
+{"set":"written","prefix":"heroicons","query":"icon for order shipping status","icon":"truck"}
+{"set":"written","prefix":"heroicons","query":"purchase","icon":"shopping-bag"}
+{"set":"written","prefix":"heroicons","query":"cart","icon":"shopping-bag"}
+{"set":"written","prefix":"heroicons","query":"icon for online store checkout","icon":"shopping-bag"}
+{"set":"written","prefix":"heroicons","query":"send message","icon":"paper-airplane"}
+{"set":"written","prefix":"heroicons","query":"submit","icon":"paper-airplane"}
+{"set":"written","prefix":"heroicons","query":"edit","icon":"pencil"}
+{"set":"written","prefix":"heroicons","query":"write","icon":"pencil"}
+{"set":"written","prefix":"heroicons","query":"icon for editing text or content","icon":"pencil"}
+{"set":"written","prefix":"heroicons","query":"profile","icon":"user"}
+{"set":"written","prefix":"heroicons","query":"account","icon":"user"}
+{"set":"written","prefix":"heroicons","query":"delete key","icon":"backspace"}
+{"set":"written","prefix":"heroicons","query":"erase","icon":"backspace"}
+{"set":"written","prefix":"heroicons","query":"icon for deleting the previous character","icon":"backspace"}
+{"set":"written","prefix":"heroicons","query":"present","icon":"gift-solid"}
+{"set":"written","prefix":"heroicons","query":"reward","icon":"gift-solid"}
+{"set":"written","prefix":"heroicons","query":"icon for gifts or bonus rewards","icon":"gift-solid"}
+{"set":"written","prefix":"fa6-solid","query":"reuse","icon":"recycle"}
+{"set":"written","prefix":"fa6-solid","query":"eco","icon":"recycle"}
+{"set":"written","prefix":"fa6-solid","query":"icon for waste sorting and sustainability","icon":"recycle"}
+{"set":"written","prefix":"fa6-solid","query":"landslide","icon":"hill-rockslide"}
+{"set":"written","prefix":"fa6-solid","query":"icon for natural disaster road hazard","icon":"hill-rockslide"}
+{"set":"written","prefix":"fa6-solid","query":"admission","icon":"ticket"}
+{"set":"written","prefix":"fa6-solid","query":"event pass","icon":"ticket"}
+{"set":"written","prefix":"fa6-solid","query":"icon for buying event entry","icon":"ticket"}
+{"set":"written","prefix":"fa6-solid","query":"sound document","icon":"file-audio"}
+{"set":"written","prefix":"fa6-solid","query":"mp3","icon":"file-audio"}
+{"set":"written","prefix":"fa6-solid","query":"storage","icon":"warehouse"}
+{"set":"written","prefix":"fa6-solid","query":"depot","icon":"warehouse"}
+{"set":"written","prefix":"fa6-solid","query":"icon for inventory storage building","icon":"warehouse"}
+{"set":"written","prefix":"fa6-solid","query":"photo","icon":"camera"}
+{"set":"written","prefix":"fa6-solid","query":"snapshot","icon":"camera"}
+{"set":"written","prefix":"fa6-solid","query":"add new","icon":"square-plus"}
+{"set":"written","prefix":"fa6-solid","query":"create","icon":"square-plus"}
+{"set":"written","prefix":"fa6-solid","query":"justice","icon":"scale-unbalanced"}
+{"set":"written","prefix":"fa6-solid","query":"weighing","icon":"scale-unbalanced"}
+{"set":"written","prefix":"fa6-solid","query":"icon for uneven comparison or law","icon":"scale-unbalanced"}
+{"set":"written","prefix":"fa6-solid","query":"teletypewriter","icon":"tty"}
+{"set":"written","prefix":"fa6-solid","query":"deaf phone","icon":"tty"}
+{"set":"written","prefix":"fa6-solid","query":"icon for hearing impaired telephone service","icon":"tty"}
+{"set":"written","prefix":"fa6-solid","query":"hand sanitizer","icon":"pump-medical"}
+{"set":"written","prefix":"fa6-solid","query":"soap dispenser","icon":"pump-medical"}
+{"set":"written","prefix":"fa6-solid","query":"icon for hand hygiene and disinfection","icon":"pump-medical"}
+{"set":"written","prefix":"fa6-solid","query":"person","icon":"user"}
+{"set":"written","prefix":"fa6-solid","query":"avatar","icon":"user"}
+{"set":"written","prefix":"fa6-solid","query":"icon for member profile or login","icon":"user"}
+{"set":"written","prefix":"bi","query":"help","icon":"question-lg"}
+{"set":"written","prefix":"bi","query":"faq","icon":"question-lg"}
+{"set":"written","prefix":"bi","query":"icon for asking for help","icon":"question-lg"}
+{"set":"written","prefix":"bi","query":"triangle pointer","icon":"caret-up"}
+{"set":"written","prefix":"bi","query":"expand","icon":"caret-up"}
+{"set":"written","prefix":"bi","query":"small upward triangle for sorting","icon":"caret-up"}
+{"set":"written","prefix":"bi","query":"facebook chat","icon":"messenger"}
+{"set":"written","prefix":"bi","query":"instant messaging","icon":"messenger"}
+{"set":"written","prefix":"bi","query":"back","icon":"chevron-left"}
+{"set":"written","prefix":"bi","query":"previous","icon":"chevron-left"}
+{"set":"written","prefix":"bi","query":"arrow for going to previous page","icon":"chevron-left"}
+{"set":"written","prefix":"bi","query":"spyglass","icon":"binoculars-fill"}
+{"set":"written","prefix":"bi","query":"explore","icon":"binoculars-fill"}
+{"set":"written","prefix":"bi","query":"solid lenses for looking far away","icon":"binoculars-fill"}
+{"set":"written","prefix":"bi","query":"server rack","icon":"hdd-stack"}
+{"set":"written","prefix":"bi","query":"storage","icon":"hdd-stack"}
+{"set":"written","prefix":"bi","query":"stacked drives for server storage","icon":"hdd-stack"}
+{"set":"written","prefix":"bi","query":"computer pointer device","icon":"mouse-fill"}
+{"set":"written","prefix":"bi","query":"scroll","icon":"mouse-fill"}
+{"set":"written","prefix":"bi","query":"solid computer pointing device","icon":"mouse-fill"}
+{"set":"written","prefix":"bi","query":"power level","icon":"battery"}
+{"set":"written","prefix":"bi","query":"charge","icon":"battery"}
+{"set":"written","prefix":"bi","query":"empty power cell for charge status","icon":"battery"}
+{"set":"written","prefix":"bi","query":"ai search","icon":"perplexity"}
+{"set":"written","prefix":"bi","query":"answer engine","icon":"perplexity"}
+{"set":"written","prefix":"bi","query":"logo of an ai answer engine","icon":"perplexity"}
+{"set":"written","prefix":"bi","query":"germ","icon":"virus"}
+{"set":"written","prefix":"bi","query":"infection","icon":"virus"}
+{"set":"written","prefix":"bi","query":"microbe for disease or malware","icon":"virus"}
+{"set":"written","prefix":"ph","query":"running shoe","icon":"sneaker-move"}
+{"set":"written","prefix":"ph","query":"walking","icon":"sneaker-move"}
+{"set":"written","prefix":"ph","query":"shoe in motion for activity","icon":"sneaker-move"}
+{"set":"written","prefix":"ph","query":"checkbox","icon":"check-square"}
+{"set":"written","prefix":"ph","query":"done","icon":"check-square"}
+{"set":"written","prefix":"ph","query":"ticked box for completed task","icon":"check-square"}
+{"set":"written","prefix":"ph","query":"parcel","icon":"package-fill"}
+{"set":"written","prefix":"ph","query":"box delivery","icon":"package-fill"}
+{"set":"written","prefix":"ph","query":"solid box for shipping orders","icon":"package-fill"}
+{"set":"written","prefix":"ph","query":"blossom","icon":"flower-fill"}
+{"set":"written","prefix":"ph","query":"garden","icon":"flower-fill"}
+{"set":"written","prefix":"ph","query":"solid bloom for nature or plants","icon":"flower-fill"}
+{"set":"written","prefix":"ph","query":"music streaming","icon":"spotify-logo"}
+{"set":"written","prefix":"ph","query":"playlist","icon":"spotify-logo"}
+{"set":"written","prefix":"ph","query":"brand mark of music streaming service","icon":"spotify-logo"}
+{"set":"written","prefix":"ph","query":"formula","icon":"function"}
+{"set":"written","prefix":"ph","query":"math fx","icon":"function"}
+{"set":"written","prefix":"ph","query":"math symbol for formulas","icon":"function"}
+{"set":"written","prefix":"ph","query":"storm","icon":"hurricane-thin"}
+{"set":"written","prefix":"ph","query":"cyclone","icon":"hurricane-thin"}
+{"set":"written","prefix":"ph","query":"digit 9","icon":"number-nine"}
+{"set":"written","prefix":"ph","query":"the digit after eight","icon":"number-nine"}
+{"set":"written","prefix":"ph","query":"american sport","icon":"football-duotone"}
+{"set":"written","prefix":"ph","query":"motorbike","icon":"motorcycle-bold"}
+{"set":"written","prefix":"ph","query":"scooter","icon":"motorcycle-bold"}
+{"set":"written","prefix":"ph","query":"help","icon":"question-thin"}
+{"set":"written","prefix":"ph","query":"unknown","icon":"question-thin"}
+{"set":"written","prefix":"heroicons","query":"mute notifications","icon":"bell-slash"}
+{"set":"written","prefix":"heroicons","query":"silent","icon":"bell-slash"}
+{"set":"written","prefix":"heroicons","query":"icon for turning off alerts","icon":"bell-slash"}
+{"set":"written","prefix":"heroicons","query":"mail trays","icon":"inbox-stack"}
+{"set":"written","prefix":"heroicons","query":"archive","icon":"inbox-stack"}
+{"set":"written","prefix":"heroicons","query":"stacked trays for message folders","icon":"inbox-stack"}
+{"set":"written","prefix":"heroicons","query":"success","icon":"check-circle"}
+{"set":"written","prefix":"heroicons","query":"approved","icon":"check-circle"}
+{"set":"written","prefix":"heroicons","query":"round tick for confirmed action","icon":"check-circle"}
+{"set":"written","prefix":"heroicons","query":"weather","icon":"cloud-solid"}
+{"set":"written","prefix":"heroicons","query":"online storage","icon":"cloud-solid"}

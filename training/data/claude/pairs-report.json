@@ -1,0 +1,1 @@
+{ "model": "claude-opus-5-5", "batch": "msgbatch_job_12KBMS3VK9C9VFZZ33WBFEPRFZ", "failed": 0, "usage": { "input": 117674, "output": 485582 }, "costUSD": 5.09 }
