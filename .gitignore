@@ -16,3 +16,4 @@ temp
 __pycache__
 .pytest_cache
 .ruff_cache
+playground/public/data
