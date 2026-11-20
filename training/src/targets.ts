@@ -51,7 +51,7 @@ export interface TargetOptions {
   secondHopWeight: number
 }
 
-export const DEFAULT_TARGET_OPTIONS: TargetOptions = { teacherWeight: 0.5, tagPower: 0.5, secondHopWeight: 0 }
+export const DEFAULT_TARGET_OPTIONS: TargetOptions = { teacherWeight: 0.25, tagPower: 0.5, secondHopWeight: 0 }
 
 export interface TrainingQuery {
   /** One word, or a phrase of several words */
