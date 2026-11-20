@@ -17,13 +17,14 @@ The model runs once for the whole query, and once for each word of a longer quer
 
 ## Training
 
-Training reads only stage 1 signals:
+Training reads the signals of stage 1 and stage 2:
 
 - Words that occur together in the tags of an icon. The tags come from 11 icon sets, listed in `THIRD_PARTY_NOTICES.md`.
 - Alias names in Iconify icon sets.
 - The 12 closest words by `bge-small-en-v1.5` embedding, with a weight of 0.25.
+- Stage 2: search terms, descriptions and opposites that `claude-opus-5-5` wrote for the 5,998 most frequent words. They are in `training/data/claude/pairs.jsonl`. The batch cost 5.09 USD.
 
-A single word points to itself and to its related words. A tag of several words points to the name words of its icons. During training, 25% of the single words are cut to a prefix and 25% get one or two typing mistakes. For such a word, the intended word gets half of the target weight. 15% of the examples get filler words such as "icon for" around them.
+A single word points to itself and to its related words. A phrase points to the name words of the icons that carry it as a tag, or to the word that Claude wrote it for. Opposites are removed from the related words. During training, 25% of the single words are cut to a prefix and 25% get one or two typing mistakes. For such a word, the intended word gets half of the target weight. 15% of the examples get filler words such as "icon for" around them.
 
 The run used PyTorch 2.15.0 on a CPU: 24,000 steps with a batch of 1,024, AdamW, and 6-bit rounding in the last 5,000 steps. It took 20 minutes.
 
@@ -31,35 +32,39 @@ The run used PyTorch 2.15.0 on a CPU: 24,000 steps with a batch of 1,024, AdamW,
 
 `evaluate` ran the candidate through the public API on WebGPU. The adapter was SwiftShader, a software GPU. The numbers are the share of queries with a correct icon on the first screen of 50 results.
 
-| Method | alias | transfer | typing | overall |
-| --- | ---: | ---: | ---: | ---: |
-| `fzf` | 8.1% | 1.7% | 4.5% | 4.8% |
-| `fzf+alias`, the current Icones search | 93.2% | 8.6% | 4.6% | 35.5% |
-| `fzf+table`, tag counts with no model | 69.2% | 33.6% | 5.3% | 36.0% |
-| `fzf+model`, this candidate | 61.4% | 31.5% | 23.0% | 38.7% |
+| Method | alias | transfer | typing | written | overall |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `fzf` | 8.1% | 1.7% | 4.5% | 0.0% | 3.6% |
+| `fzf+alias`, the current Icones search | 93.2% | 8.6% | 4.6% | 3.7% | 27.5% |
+| `fzf+table`, tag counts with no model | 69.2% | 33.6% | 5.3% | 20.6% | 32.2% |
+| `fzf+model`, stage 1 only | 61.4% | 31.5% | 23.0% | not measured | not measured |
+| `fzf+model`, this candidate | 71.5% | 37.5% | 21.3% | 61.6% | 48.0% |
 
-The test sets have 2,643, 3,000 and 1,876 cases. Test set 4, the written queries, does not exist yet.
+The test sets have 2,643, 3,000, 1,876 and 383 cases. The overall score is the mean of the four sets.
+
+Read the `written` score with care. `claude-opus-5-5` wrote that test set, and it also wrote the stage 2 training pairs, from a different prompt. The maintainer did not review the test set yet. The review page of the playground is the place for that.
 
 The ship gate gives this result:
 
 | Rule | Result |
 | --- | --- |
 | Overall score above `fzf+alias` | Pass |
-| `alias` not below `fzf+alias` | Fail: 61.4% against 93.2% |
+| `alias` not below `fzf+alias` | Fail: 71.5% against 93.2% |
 | `transfer` not below `fzf+alias` | Pass |
 | `typing` not below `fzf+alias` | Pass |
+| `written` not below `fzf+alias` | Pass |
 | WebGPU output matches the PyTorch fixtures | Pass: the largest difference is 0.00005 |
-| Compressed size within 1 MB | Pass: 841,021 bytes with Brotli |
+| Compressed size within 1 MB | Pass: 841,241 bytes with Brotli |
 
 The `alias` test set comes from the manual alias list of Icones. The `fzf+alias` baseline uses that same list, so it holds the answers of this test set.
 
-Other measurements of the candidate:
+Other measurements:
 
-- For 600 common words, the intended word is in the top 8 predictions for 89% of the prefixes and for 34% of the misspellings.
 - A warm `predict` call takes 0.97 ms on the software GPU. No measurement on a real GPU exists.
 - The weight file is 960,672 bytes. The word list takes about 100,000 of them.
+- For the stage 1 candidate and 600 common words, the intended word is in the top 8 predictions for 89% of the prefixes and for 34% of the misspellings.
 
-`training/data/sweep.json` compares three model sizes at 8,000 steps. The scores rise with the size up to the 1 MB limit.
+`training/data/sweep.json` compares three model sizes at 8,000 steps with stage 1 data. The scores rise with the size up to the 1 MB limit.
 
 ## Stage 3: look-alike icons
 
@@ -76,17 +81,16 @@ The ablation added the name words of each pair to the tag table. The scores went
 
 ## Decision point
 
-The plan asks for a discussion if the model does not clearly win against `fzf+table` on test sets 2 to 4. The model wins on `typing`. It does not win on `transfer`, and it scores lower on `alias`. The tags and the teacher model limit both methods: the training targets themselves reach about 69% on `alias` and 36% on `transfer`.
+The plan asks for a discussion if the model does not clearly win against `fzf+table` on test sets 2 to 4. With stage 1 data, the model won only on `typing`. With stage 2 data, it wins on all four sets.
 
-Three options can raise the scores. Each one needs a decision of the maintainer:
+One rule of the ship gate still fails: `alias`. Two changes of the integration can raise that score. Each one needs a decision of the maintainer:
 
-- Run the Claude script for stage 2. It adds the synonyms and descriptions that the tags do not contain.
 - Interleave the results of the predicted words. With one block per predicted word, the first word can fill the whole first screen. In an offline measurement on an earlier candidate, interleaving lifts `alias` from 64% to 70%.
-- Return more predictions. With 12 words instead of 8, `alias` gains about 5 points and `transfer` gains about 4.
+- Return more predictions. With 12 words instead of 8, an earlier candidate gains about 5 points on `alias` and about 4 on `transfer`.
 
 ## Limits
 
-- Descriptions work only for simple cases. For "icon for removing an item", the candidate predicts `remove` and `delete`, but also `drone` and `vacuum`.
+- Descriptions are tested only by the `written` set, which is not reviewed.
 - No test checks that opposites stay apart, for example `next` and `previous`.
 - The model knows English only.
 - A word outside the built-in word list is never predicted.

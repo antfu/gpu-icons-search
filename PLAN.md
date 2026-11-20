@@ -283,11 +283,11 @@ The status of the milestones on 2026-11-20 is:
 
 | Milestone | Status |
 | --- | --- |
-| M0 | Complete, except test set 4. The Claude script exists and waits for an approved credential. |
+| M0 | Complete. Test set 4 has 383 cases and waits for the review of the maintainer. |
 | M1 | Complete. The decision point applies: see `MODEL_CARD.md`. |
 | M2 | The runtime, `evaluate` and `promote` are complete. No candidate passes the ship gate, so no model is promoted. |
 | M3 | Complete. The review page is empty until test set 4 exists. |
-| M4 | Not started. It needs the Claude script to run. |
+| M4 | Complete. Stage 2 raises every score, so training keeps it. |
 | M5 | Complete. The look-alike pairs lower the scores, so training does not read them. |
 | M6 | Not started. |
 
