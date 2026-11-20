@@ -13,7 +13,13 @@
     "url": "git+https://github.com/antfu/gpu-icons-search.git"
   },
   "bugs": "https://github.com/antfu/gpu-icons-search/issues",
-  "keywords": [],
+  "keywords": [
+    "icons",
+    "search",
+    "webgpu",
+    "iconify",
+    "icones"
+  ],
   "sideEffects": false,
   "exports": {
     ".": "./dist/index.mjs",
@@ -36,8 +42,12 @@
     "typecheck": "tsc && pnpm -r run typecheck",
     "ci": "pnpm run lint && pnpm run typecheck && pnpm run knip && pnpm run test --run",
     "prepare": "git config core.hooksPath .githooks && simple-git-hooks && skills sync -y",
-    "data": "pnpm -C training run data",
-    "bench": "pnpm -C training run bench"
+    "data": "pnpm -C training run data && pnpm -C training run targets",
+    "bench": "pnpm -C training run bench",
+    "train": "pnpm -C training run train",
+    "evaluate": "pnpm -C training run evaluate",
+    "promote": "pnpm -C training run promote",
+    "play": "pnpm -C playground run dev"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:cli",
