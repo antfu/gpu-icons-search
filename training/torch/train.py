@@ -87,7 +87,7 @@ def main() -> None:
     parser.add_argument("--rows", type=int, default=16384, help="rows of the feature table, a power of two")
     parser.add_argument("--dim", type=int, default=32)
     parser.add_argument("--hidden", type=int, default=64)
-    parser.add_argument("--steps", type=int, default=20000)
+    parser.add_argument("--steps", type=int, default=16000)
     parser.add_argument("--prefix", type=float, default=0.3, help="share of single words that are cut")
     parser.add_argument("--typo", type=float, default=0.4, help="share of single words that are misspelled")
     parser.add_argument("--batch", type=int, default=1024)
