@@ -1,0 +1,52 @@
+[project]
+name = "gpu-icons-search-training"
+version = "0.0.0"
+description = "PyTorch training loop for gpu-icons-search"
+requires-python = ">=3.11"
+dependencies = [
+  "numpy>=2",
+  "torch>=2.6,<3",
+]
+
+[dependency-groups]
+dev = [
+  "pytest>=8",
+  "ruff>=0.8",
+]
+
+[tool.uv]
+package = false
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+
+[tool.ruff.lint]
+select = [
+  "E",
+  "F",
+  "I",
+  "UP",
+  "B"
+]
+
+[tool.pytest.ini_options]
+testpaths = [ "torch" ]
+pythonpath = [ "torch" ]
+
+# Linux machines here have no GPU, so they use the CPU-only wheels.
+# macOS uses the default wheels, which include the Metal backend.
+[tool.uv.sources]
+torch = [ { index = "pytorch-cpu", marker = "sys_platform == 'linux'" } ]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.ruff.lint.isort]
+known-first-party = [
+  "data",
+  "features",
+  "model"
+]
