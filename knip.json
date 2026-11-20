@@ -24,6 +24,9 @@
         "@tabler/icons",
         "ionicons",
         "lucide-static"
+      ],
+      "ignoreBinaries": [
+        "uv"
       ]
     }
   }
