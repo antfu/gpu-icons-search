@@ -71,6 +71,7 @@ def write_weights(model, vocabulary: list[str], file: Path, bits: int) -> None:
     parts = [
         _feature_tensor(model.features.weight, bits),
         _word_tensor(model.words, bits),
+        _float_tensor("featureWeight", model.feature_gate.exp()),
         _float_tensor("gateWeight", model.gate.weight.flatten()),
         _float_tensor("gateBias", model.gate.bias),
         _float_tensor("fc1Weight", model.fc1.weight),
@@ -86,7 +87,7 @@ def write_weights(model, vocabulary: list[str], file: Path, bits: int) -> None:
         payload += data
     words = "\n".join(vocabulary).encode()
     header = {
-        "version": 1,
+        "version": 2,
         "rows": model.features.num_embeddings,
         "dim": model.features.embedding_dim,
         "hidden": model.fc1.out_features,

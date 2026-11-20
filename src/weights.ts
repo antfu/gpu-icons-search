@@ -24,7 +24,7 @@ interface TensorHeader {
 }
 
 interface WeightsHeader {
-  version: 1
+  version: 2
   /** Rows of the feature table, a power of two */
   rows: number
   /** Length of a word vector */
@@ -44,6 +44,8 @@ export interface ModelWeights {
   vocabulary: string[]
   /** `rows` x `dim` */
   features: Float32Array
+  /** Weight of each feature row in the mean of a word, `rows` values */
+  featureWeight: Float32Array
   /** `vocabulary.length` x `dim`, unit rows */
   words: Float32Array
   gateWeight: Float32Array
@@ -58,6 +60,7 @@ export interface ModelWeights {
 
 const TENSOR_NAMES = [
   'features',
+  'featureWeight',
   'words',
   'gateWeight',
   'gateBias',
@@ -109,7 +112,7 @@ export function parseWeights(file: ArrayBuffer): ModelWeights {
   const view = new DataView(file)
   const headerLength = view.getUint32(0, true)
   const header = JSON.parse(new TextDecoder().decode(new Uint8Array(file, 4, headerLength))) as WeightsHeader
-  if (header.version !== 1)
+  if (header.version !== 2)
     throw new Error(`Unsupported weight file version ${String(header.version)}`)
   const payload = new Uint8Array(file, Math.ceil((4 + headerLength) / 4) * 4)
   const tensors = new Map(header.tensors.map(tensor => [
@@ -121,19 +124,20 @@ export function parseWeights(file: ArrayBuffer): ModelWeights {
     throw new Error(`Weight file has no tensor ${missing.join(', ')}`)
   const { offset, length } = header.vocabulary
   const vocabulary = new TextDecoder().decode(payload.subarray(offset, offset + length)).split('\n')
-  const [features, words, gateWeight, gateBias, fc1Weight, fc1Bias, fc2Weight, fc2Bias] = TENSOR_NAMES.map(name => tensors.get(name)!)
+  const tensor = (name: typeof TENSOR_NAMES[number]): Float32Array => tensors.get(name)!
   return {
     rows: header.rows,
     dim: header.dim,
     hidden: header.hidden,
     vocabulary,
-    features: features!,
-    words: words!,
-    gateWeight: gateWeight!,
-    gateBias: gateBias!,
-    fc1Weight: fc1Weight!,
-    fc1Bias: fc1Bias!,
-    fc2Weight: fc2Weight!,
-    fc2Bias: fc2Bias!,
+    features: tensor('features'),
+    featureWeight: tensor('featureWeight'),
+    words: tensor('words'),
+    gateWeight: tensor('gateWeight'),
+    gateBias: tensor('gateBias'),
+    fc1Weight: tensor('fc1Weight'),
+    fc1Bias: tensor('fc1Bias'),
+    fc2Weight: tensor('fc2Weight'),
+    fc2Bias: tensor('fc2Bias'),
   }
 }

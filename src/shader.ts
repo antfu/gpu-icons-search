@@ -95,13 +95,17 @@ fn encode(@builtin(global_invocation_id) id: vec3u) {
     let last = input[WORD_START + word + 1u];
     // The explicit zero value matters: without it, the vector of the previous word leaks into this one
     var vector = array<f32, DIM>();
+    var weightSum = 0.0;
     for (var feature = first; feature < last; feature++) {
-      let row = input[FEATURE_ROWS + feature] * DIM;
+      // Each row of the feature buffer holds its vector, then its weight
+      let row = input[FEATURE_ROWS + feature] * (DIM + 1u);
+      let weight = features[row + DIM];
+      weightSum += weight;
       for (var i = 0u; i < DIM; i++) {
-        vector[i] += features[row + i];
+        vector[i] += weight * features[row + i];
       }
     }
-    let scale = 1.0 / f32(last - first);
+    let scale = 1.0 / weightSum;
     var gate = params[GATE_BIAS];
     for (var i = 0u; i < DIM; i++) {
       vector[i] *= scale;

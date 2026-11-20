@@ -10,7 +10,8 @@ from export import quantize_features, quantize_words
 class IconWordModel(nn.Module):
     """Score every word of the word list for each query.
 
-    A word of the query is the mean of the learned vectors of its feature rows.
+    A word of the query is the weighted mean of the learned vectors of its feature rows.
+    Each row has a learned weight, so that rows of rare character pieces can count less.
     A learned gate weighs each word, so that filler words count less.
     The weighted mean of the words goes through one residual layer.
     The score of a target word is the cosine between that result and the row of the word.
@@ -18,7 +19,9 @@ class IconWordModel(nn.Module):
 
     def __init__(self, rows: int, words: int, dim: int, hidden: int):
         super().__init__()
-        self.features = nn.EmbeddingBag(rows, dim, mode="mean")
+        self.features = nn.Embedding(rows, dim)
+        self.feature_gate = nn.Parameter(torch.zeros(rows))
+        """Logarithm of the weight of each feature row."""
         self.gate = nn.Linear(dim, 1)
         self.fc1 = nn.Linear(dim, hidden)
         self.fc2 = nn.Linear(hidden, dim)
@@ -39,7 +42,14 @@ class IconWordModel(nn.Module):
         `word_query` gives the query that each word belongs to.
         """
         table = quantize_features(self.features.weight) if self.quantize else self.features.weight
-        word = F.embedding_bag(rows, table, offsets, mode="mean")
+        weights = self.feature_gate.exp()[rows]
+        word = F.embedding_bag(rows, table, offsets, mode="sum", per_sample_weights=weights)
+        # The word that each feature row belongs to
+        owner = torch.zeros(len(rows), device=word.device, dtype=torch.long)
+        owner[offsets[1:]] = 1
+        owner = owner.cumsum(0)
+        total_weight = torch.zeros(len(offsets), device=word.device).index_add_(0, owner, weights)
+        word = word / total_weight.unsqueeze(1)
         weight = torch.sigmoid(self.gate(word))
         total = torch.zeros(queries, word.shape[1], device=word.device).index_add_(
             0, word_query, weight * word

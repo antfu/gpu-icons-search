@@ -21,16 +21,18 @@ function dot(a: Float32Array, aOffset: number, b: Float32Array, bOffset: number,
   return sum
 }
 
-/** The vector of one word: the mean of the rows of its features */
+/** The vector of one word: the weighted mean of the rows of its features */
 function wordVector(model: ModelWeights, word: string): Float32Array {
   const { dim, rows } = model
-  const features = wordFeatures(word, rows)
   const vector = new Float32Array(dim)
-  for (const row of features) {
+  let total = 0
+  for (const row of wordFeatures(word, rows)) {
+    const weight = model.featureWeight[row]!
+    total += weight
     for (let i = 0; i < dim; i++)
-      vector[i]! += model.features[row * dim + i]! / features.length
+      vector[i]! += weight * model.features[row * dim + i]!
   }
-  return vector
+  return vector.map(value => value / total)
 }
 
 /**

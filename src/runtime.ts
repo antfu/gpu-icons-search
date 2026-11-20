@@ -17,6 +17,16 @@ const USAGE = {
 /** `MAP_MODE_READ` of the WebGPU specification */
 const MAP_MODE_READ = 0x0001
 
+/** Append the weight of each feature row to its vector, as the `encode` shader expects */
+function withRowWeights({ features, featureWeight, rows, dim }: ModelWeights): Float32Array {
+  const packed = new Float32Array(rows * (dim + 1))
+  for (let row = 0; row < rows; row++) {
+    packed.set(features.subarray(row * dim, (row + 1) * dim), row * (dim + 1))
+    packed[row * (dim + 1) + dim] = featureWeight[row]!
+  }
+  return packed
+}
+
 /**
  * The model on one GPU device.
  * It uploads the weights once, and reuses its pipelines and buffers for every call.
@@ -42,7 +52,7 @@ export class GpuModel {
     params.set(weights.fc2Bias, layout.fc2Bias)
 
     const storage = USAGE.STORAGE
-    const features = this.upload(weights.features)
+    const features = this.upload(withRowWeights(weights))
     const words = this.upload(weights.words)
     const paramBuffer = this.upload(params)
     this.inputBuffer = device.createBuffer({ size: this.input.byteLength, usage: storage | USAGE.COPY_DST })

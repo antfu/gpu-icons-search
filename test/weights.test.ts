@@ -17,7 +17,8 @@ function floats(values: number[]): number[] {
   ]
 }
 
-function buildFile(): ArrayBuffer {
+/** Build a small weight file in memory, without the tensor named `skip` */
+function buildFile(skip?: string): ArrayBuffer {
   const parts: { name: string, shape: number[], type: string, scale?: number, unit?: boolean, bytes: number[] }[] = [
     {
       name: 'features',
@@ -25,6 +26,12 @@ function buildFile(): ArrayBuffer {
       type: 'q6',
       scale: 0.5,
       bytes: pack6([-31, 0, 1, 31]),
+    },
+    {
+      name: 'featureWeight',
+      shape: [2],
+      type: 'f32',
+      bytes: floats([1, 0.5]),
     },
     {
       name: 'words',
@@ -72,7 +79,7 @@ function buildFile(): ArrayBuffer {
     },
   ]
   const payload: number[] = []
-  const tensors = parts.map(({ bytes, ...tensor }) => {
+  const tensors = parts.filter(part => part.name !== skip).map(({ bytes, ...tensor }) => {
     while (payload.length % 4 !== 0)
       payload.push(0)
     const offset = payload.length
@@ -83,7 +90,7 @@ function buildFile(): ArrayBuffer {
     ...new TextEncoder().encode('home\nhouse'),
   ]
   const header = {
-    version: 1,
+    version: 2,
     rows: 2,
     dim: 2,
     hidden: 1,
@@ -111,8 +118,6 @@ describe('parseWeights', () => {
   })
 
   it('rejects a file with a missing tensor', () => {
-    const file = new Uint8Array(buildFile())
-    const text = new TextDecoder().decode(file).replace('"gateBias"', '"gateBiaz"')
-    expect(() => parseWeights(new TextEncoder().encode(text).buffer)).toThrow('gateBias')
+    expect(() => parseWeights(buildFile('gateBias'))).toThrow('gateBias')
   })
 })
