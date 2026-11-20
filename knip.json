@@ -23,8 +23,7 @@
         "@primer/octicons",
         "@tabler/icons",
         "ionicons",
-        "lucide-static",
-        "fzf"
+        "lucide-static"
       ]
     }
   }
