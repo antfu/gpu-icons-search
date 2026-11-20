@@ -6,14 +6,16 @@ import math
 import time
 from pathlib import Path
 
+import torch
 import torch.nn.functional as F
 
-import torch
 from data import TrainingData
+from export import write_weights
 from features import split_query
 from model import IconWordModel
 
 ROOT = Path(__file__).parent.parent
+FIXTURE_QUERIES = ["home", "hom", "hoem", "trash", "arrow up right", "icon for removing an item", "x", "a11y"]
 PROBES = [
     "trash",
     "hom",
@@ -44,43 +46,38 @@ def predict(
     best = scores.topk(limit, dim=-1)
     return [
         [
-            (data.vocabulary[index], round(score, 2))
+            (data.vocabulary[index], round(score, 4))
             for index, score in zip(ids.tolist(), values.tolist(), strict=True)
         ]
         for ids, values in zip(best.indices, best.values, strict=True)
     ]
 
 
-def export(model: IconWordModel, data: TrainingData, args: argparse.Namespace, out: Path) -> None:
-    """Write the weights as little-endian float32, with a JSON file that describes them."""
+def write_fixtures(model: IconWordModel, data: TrainingData, device: torch.device, file: Path) -> None:
+    """Store the unit vectors and best words of a few queries, for the parity tests of other runtimes."""
+    queries = [split_query(query) for query in FIXTURE_QUERIES]
+    rows, offsets, owner = data.encode(queries)
+    with torch.no_grad():
+        vectors = model.encode(rows.to(device), offsets.to(device), owner.to(device), len(queries))
+    best = predict(model, data, FIXTURE_QUERIES, device, limit=8)
+    fixtures = [
+        {"words": words, "vector": [round(value, 6) for value in vector.tolist()], "best": top}
+        for words, vector, top in zip(queries, vectors.cpu(), best, strict=True)
+    ]
+    file.write_text(json.dumps(fixtures) + "\n")
+
+
+def export(model: IconWordModel, data: TrainingData, args: argparse.Namespace, device: torch.device) -> None:
+    """Write the candidate: weight file, parity fixtures, checkpoint and a report of the run."""
+    out: Path = args.out
     out.mkdir(parents=True, exist_ok=True)
-    state = {
-        "features": model.features.weight,
-        "gate_weight": model.gate.weight.flatten(),
-        "gate_bias": model.gate.bias,
-        "fc1_weight": model.fc1.weight,
-        "fc1_bias": model.fc1.bias,
-        "fc2_weight": model.fc2.weight,
-        "fc2_bias": model.fc2.bias,
-        "words": F.normalize(model.words, dim=-1),
-    }
-    tensors = []
-    offset = 0
-    with (out / "model.bin").open("wb") as file:
-        for name, tensor in state.items():
-            values = tensor.detach().cpu().to(torch.float32).contiguous()
-            file.write(values.numpy().astype("<f4").tobytes())
-            tensors.append({"name": name, "shape": list(values.shape), "offset": offset})
-            offset += values.numel() * 4
-    meta = {
-        "rows": args.rows,
-        "dim": args.dim,
-        "hidden": args.hidden,
-        "tensors": tensors,
-        "vocabulary": data.vocabulary,
-        "training": {"steps": args.steps, "batch": args.batch, "seed": args.seed},
-    }
-    (out / "model.json").write_text(json.dumps(meta) + "\n")
+    model.quantize = args.bits == 6
+    write_weights(model, data.vocabulary, out / "model.bin", args.bits)
+    write_fixtures(model, data, device, out / "fixtures.json")
+    torch.save(model.state_dict(), out / "model.pt")
+    settings = {key: str(value) if isinstance(value, Path) else value for key, value in vars(args).items()}
+    report = {"settings": settings, "bytes": (out / "model.bin").stat().st_size, "torch": torch.__version__}
+    (out / "report.json").write_text(json.dumps(report, indent=2) + "\n")
 
 
 def main() -> None:
@@ -94,6 +91,12 @@ def main() -> None:
     parser.add_argument("--batch", type=int, default=1024)
     parser.add_argument("--lr", type=float, default=3e-3)
     parser.add_argument("--seed", type=int, default=1)
+    parser.add_argument(
+        "--bits", type=int, default=6, choices=[6, 32], help="bits per weight of the two tables"
+    )
+    parser.add_argument(
+        "--qat-steps", type=int, default=4000, help="last steps that train with 6-bit rounding"
+    )
     args = parser.parse_args()
 
     torch.manual_seed(args.seed)
@@ -114,6 +117,7 @@ def main() -> None:
     started = time.time()
     running = 0.0
     for step in range(1, args.steps + 1):
+        model.quantize = args.bits == 6 and step > args.steps - args.qat_steps
         batch = data.sample(args.batch)
         logits = model(
             batch.rows.to(device), batch.offsets.to(device), batch.word_query.to(device), args.batch
@@ -132,9 +136,9 @@ def main() -> None:
             running = 0.0
 
     model.eval()
+    export(model, data, args, device)
     for query, words in zip(PROBES, predict(model, data, PROBES, device), strict=True):
-        print(f"{query!r:32} {' '.join(f'{word}:{score}' for word, score in words)}")
-    export(model, data, args, args.out)
+        print(f"{query!r:32} {' '.join(f'{word}:{score:.2f}' for word, score in words)}")
     print(f"exported to {args.out} in {time.time() - started:.0f} s")
 
 

@@ -1,9 +1,10 @@
 """The model: a gated bag of hashed word features, a small residual layer, and a word table."""
 
-import torch.nn.functional as F
-
 import torch
+import torch.nn.functional as F
 from torch import nn
+
+from export import quantize_features, quantize_words
 
 
 class IconWordModel(nn.Module):
@@ -23,6 +24,8 @@ class IconWordModel(nn.Module):
         self.fc2 = nn.Linear(hidden, dim)
         self.words = nn.Parameter(torch.randn(words, dim) * 0.1)
         self.log_scale = nn.Parameter(torch.tensor(3.0))
+        self.quantize = False
+        """Round the two large tables to their 6-bit storage format in the forward pass."""
         nn.init.normal_(self.features.weight, std=0.1)
         nn.init.zeros_(self.fc2.weight)
         nn.init.zeros_(self.fc2.bias)
@@ -35,7 +38,8 @@ class IconWordModel(nn.Module):
         `rows` and `offsets` describe the feature rows of each query word, as `nn.EmbeddingBag` expects.
         `word_query` gives the query that each word belongs to.
         """
-        word = self.features(rows, offsets)
+        table = quantize_features(self.features.weight) if self.quantize else self.features.weight
+        word = F.embedding_bag(rows, table, offsets, mode="mean")
         weight = torch.sigmoid(self.gate(word))
         total = torch.zeros(queries, word.shape[1], device=word.device).index_add_(
             0, word_query, weight * word
@@ -49,8 +53,6 @@ class IconWordModel(nn.Module):
         self, rows: torch.Tensor, offsets: torch.Tensor, word_query: torch.Tensor, queries: int
     ) -> torch.Tensor:
         """Return the scaled cosine of each query with each word of the word list."""
-        return (
-            self.log_scale.exp()
-            * self.encode(rows, offsets, word_query, queries)
-            @ F.normalize(self.words, dim=-1).T
-        )
+        words = quantize_words(self.words) if self.quantize else self.words
+        units = self.encode(rows, offsets, word_query, queries)
+        return self.log_scale.exp() * units @ F.normalize(words, dim=-1).T

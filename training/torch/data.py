@@ -6,8 +6,8 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import numpy as np
-
 import torch
+
 from features import MAX_QUERY_WORDS, word_features
 
 LETTERS = "abcdefghijklmnopqrstuvwxyz"
