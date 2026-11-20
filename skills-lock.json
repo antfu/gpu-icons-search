@@ -3,7 +3,7 @@
   "skills": {
     "agent-browser": {
       "source": "vercel-labs/agent-browser",
-      "commit": "b06e2533ba9b3823b8a96c859d455cb55f4d7893",
+      "commit": "4605d82cfc20dbd051f57a631b5b7130e32141a5",
       "sourceType": "github",
       "skillPath": "skills/agent-browser/SKILL.md",
       "computedHash": "a0dfac7503f69bcf529b2660fc79964064c4f179eb65695904ddc45fc0d99d20",
@@ -51,7 +51,7 @@
     },
     "code-review": {
       "source": "mattpocock/skills",
-      "commit": "5863806dd4e15c63174bee4e7515a4256792ecfa",
+      "commit": "abeeaf95660ba9e8b7c753eb38f441ca707a8823",
       "sourceType": "github",
       "skillPath": "skills/engineering/code-review/SKILL.md",
       "computedHash": "ce86b40a3d1648a0018b712f0c70704e6c2316b2a9b9e915ab116916a31273dc",
@@ -59,7 +59,7 @@
     },
     "codebase-design": {
       "source": "mattpocock/skills",
-      "commit": "5863806dd4e15c63174bee4e7515a4256792ecfa",
+      "commit": "abeeaf95660ba9e8b7c753eb38f441ca707a8823",
       "sourceType": "github",
       "skillPath": "skills/engineering/codebase-design/SKILL.md",
       "computedHash": "d40f025dc1b0f2020663260f38f2bcb8d6ed3523afb11e5fda624b01238677e8",
@@ -75,7 +75,7 @@
     },
     "dry-refactoring": {
       "source": "kucherenko/jscpd",
-      "commit": "b79927a32fbfa38f9580c224d679c8ef855c1d5f",
+      "commit": "f79ae2bc1af034143b1a017b9a7bf835adc2de8d",
       "sourceType": "github",
       "skillPath": "skills/dry-refactoring/SKILL.md",
       "computedHash": "a1271fcaf6f275edf3b71f06371efe0ce346c44d1095114b311d66e6a9ed3d82",
@@ -91,7 +91,7 @@
     },
     "grill-me": {
       "source": "mattpocock/skills",
-      "commit": "5863806dd4e15c63174bee4e7515a4256792ecfa",
+      "commit": "abeeaf95660ba9e8b7c753eb38f441ca707a8823",
       "sourceType": "github",
       "skillPath": "skills/productivity/grill-me/SKILL.md",
       "computedHash": "ab1acb9fbd9eaee03da254abb8a8de228d1e7a07475fe959da4a5eefa34ea4b9",
@@ -99,7 +99,7 @@
     },
     "grilling": {
       "source": "mattpocock/skills",
-      "commit": "5863806dd4e15c63174bee4e7515a4256792ecfa",
+      "commit": "abeeaf95660ba9e8b7c753eb38f441ca707a8823",
       "sourceType": "github",
       "skillPath": "skills/productivity/grilling/SKILL.md",
       "computedHash": "485451958784497cd4c4dbea13cb5bbb579da58fac0d0e45f3bcb310fab68ac7",
@@ -107,7 +107,7 @@
     },
     "handoff": {
       "source": "mattpocock/skills",
-      "commit": "5863806dd4e15c63174bee4e7515a4256792ecfa",
+      "commit": "abeeaf95660ba9e8b7c753eb38f441ca707a8823",
       "sourceType": "github",
       "skillPath": "skills/productivity/handoff/SKILL.md",
       "computedHash": "f60a2c3688379b7a306b3a7b8dd4120eab39da44c74fa2cb62d6424935f04aa7",
@@ -131,7 +131,7 @@
     },
     "nuxt-modules": {
       "source": "onmax/nuxt-skills",
-      "commit": "904ecc4dedb5a220796d6b345badc4eda2347eff",
+      "commit": "db72bd04fdae7f404532a4c9904df3a21690853e",
       "sourceType": "github",
       "skillPath": "skills/nuxt-modules/SKILL.md",
       "computedHash": "3a7875fa212789bbcf8b75a55bb505e37666ba602589d02c21b46c77305c65cf",
@@ -139,7 +139,7 @@
     },
     "research": {
       "source": "mattpocock/skills",
-      "commit": "5863806dd4e15c63174bee4e7515a4256792ecfa",
+      "commit": "abeeaf95660ba9e8b7c753eb38f441ca707a8823",
       "sourceType": "github",
       "skillPath": "skills/engineering/research/SKILL.md",
       "computedHash": "7662666af51f8b1672ed7d88360d4b82656da21bb7b11c49e956eeb3036b85d5",
@@ -162,7 +162,7 @@
     },
     "tdd": {
       "source": "mattpocock/skills",
-      "commit": "5863806dd4e15c63174bee4e7515a4256792ecfa",
+      "commit": "abeeaf95660ba9e8b7c753eb38f441ca707a8823",
       "sourceType": "github",
       "skillPath": "skills/engineering/tdd/SKILL.md",
       "computedHash": "e3e0f78ff1c2d52ffefa0378baa1e80e129d359288cf9a56f4e59afcd2aac86c",
@@ -170,7 +170,7 @@
     },
     "teach": {
       "source": "mattpocock/skills",
-      "commit": "5863806dd4e15c63174bee4e7515a4256792ecfa",
+      "commit": "abeeaf95660ba9e8b7c753eb38f441ca707a8823",
       "sourceType": "github",
       "skillPath": "skills/productivity/teach/SKILL.md",
       "computedHash": "31bb3eed09dd2787e290e933def99fbf7d65044a29119c224af47c01404ab228",
@@ -178,7 +178,7 @@
     },
     "to-questionnaire": {
       "source": "mattpocock/skills",
-      "commit": "5863806dd4e15c63174bee4e7515a4256792ecfa",
+      "commit": "abeeaf95660ba9e8b7c753eb38f441ca707a8823",
       "sourceType": "github",
       "skillPath": "skills/productivity/to-questionnaire/SKILL.md",
       "computedHash": "0bcb2b31a45a3d176daa07c16d6532ee7819b802de081090c3fa856702767b13",
@@ -193,7 +193,7 @@
     },
     "unslop": {
       "source": "cursor/plugins",
-      "commit": "320bfaa1fe11077b1efc7113bfafc7ef29ba1b8a",
+      "commit": "aaeb0ea3a0584995aa8f55ce44c6c5259414b896",
       "sourceType": "github",
       "skillPath": "pstack/skills/unslop/SKILL.md",
       "computedHash": "4bbcb6719a8f0f6f7fb46752e1c360791d7758a837708e300a06fc7d6907938c",
@@ -241,7 +241,7 @@
     },
     "writing-for-agents": {
       "source": "mattpocock/skills",
-      "commit": "5863806dd4e15c63174bee4e7515a4256792ecfa",
+      "commit": "abeeaf95660ba9e8b7c753eb38f441ca707a8823",
       "sourceType": "github",
       "skillPath": "skills/productivity/writing-for-agents/SKILL.md",
       "computedHash": "e79a2476b2417b228922453478d9505a6b9af19f3a412e560728ce62ed3555ca",
