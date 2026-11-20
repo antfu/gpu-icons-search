@@ -1,4 +1,5 @@
 import type { BenchCase } from './bench/cases'
+import { createHash } from 'node:crypto'
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 import process from 'node:process'
@@ -126,7 +127,11 @@ function stateFile(job: Job): string {
 
 async function submit(client: Anthropic, job: Job): Promise<void> {
   const { requests, icons } = buildRequests(job)
-  const batch = await client.messages.batches.create({ requests })
+  // The API needs a key that stays the same when the same batch is sent again
+  const idempotencyKey = createHash('sha256').update(JSON.stringify(requests)).digest('hex')
+  const batch = await client.messages.batches.create({ requests }, {
+    headers: { 'Idempotency-Key': idempotencyKey },
+  })
   writeJSON(stateFile(job), { batch: batch.id, icons } satisfies JobState)
   console.log(`Submitted batch ${batch.id} with ${requests.length} requests. Run "collect ${job}" when it ends.`)
 }
