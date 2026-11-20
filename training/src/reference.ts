@@ -5,6 +5,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { decodePredictions, queryUnits } from '../../src/decode'
 import { splitQuery, wordFeatures } from '../../src/features'
+import { TOP_WORDS } from '../../src/shader'
 import { parseWeights } from '../../src/weights'
 
 /** Load a weight file that `torch/train.py` exported */
@@ -89,7 +90,7 @@ export function referencePredictor(model: ModelWeights, { limit = 8, minScore = 
   return (query) => {
     const units = queryUnits(splitQuery(query))
     const scored: ScoredWord[] = units.flatMap((unit, index) =>
-      topWords(model, encodeUnit(model, unit.words), limit + unit.words.length).map(top => ({ unit: index, ...top })))
+      topWords(model, encodeUnit(model, unit.words), TOP_WORDS).map(top => ({ unit: index, ...top })))
     return decodePredictions(units, scored, limit, minScore)
   }
 }

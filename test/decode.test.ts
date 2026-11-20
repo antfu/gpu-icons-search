@@ -39,7 +39,6 @@ describe('decodePredictions', () => {
     const scored = [
       { unit: 0, word: 'home', score: 0.9 },
       { unit: 0, word: 'house', score: 0.7 },
-      { unit: 0, word: 'hoemwork', score: 0.5 },
     ]
     expect(decodePredictions(units, scored, 8, 0.3)).toEqual([
       {
@@ -54,13 +53,22 @@ describe('decodePredictions', () => {
         from: 'hoem',
         kind: 'related',
       },
-      {
-        word: 'hoemwork',
-        score: 0.5,
-        from: 'hoem',
-        kind: 'completion',
-      },
     ])
+    const completion = decodePredictions(queryUnits(['ho']), [
+      { unit: 0, word: 'home', score: 0.9 },
+    ], 8, 0.3)
+    expect(completion[0]!.kind).toBe('completion')
+  })
+
+  it('drops words that contain a typed word or a better prediction', () => {
+    const scored = [
+      { unit: 0, word: 'homepage', score: 0.9 },
+      { unit: 0, word: 'house', score: 0.8 },
+      { unit: 0, word: 'houses', score: 0.7 },
+      { unit: 0, word: 'building', score: 0.6 },
+    ]
+    const words = decodePredictions(queryUnits(['home']), scored, 8, 0.3).map(prediction => prediction.word)
+    expect(words).toEqual(['house', 'building'])
   })
 
   it('drops typed words, weak words and duplicates', () => {

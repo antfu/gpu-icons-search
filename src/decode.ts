@@ -77,9 +77,22 @@ function kindOf(from: string, word: string): PredictionKind {
     : 'related'
 }
 
+/** A shorter word that is part of a longer word already finds every icon that the longer word finds */
+const MIN_PART_LENGTH = 3
+
+function containsOneOf(word: string, parts: Iterable<string>): boolean {
+  for (const part of parts) {
+    if (part.length >= MIN_PART_LENGTH && word !== part && word.includes(part))
+      return true
+  }
+  return false
+}
+
 /**
  * Turn scored words into predictions, best first.
  * A word that the user typed is not a prediction. A word that several units predict counts once.
+ * A word that contains a typed word or a better prediction is dropped, because a host
+ * that matches substrings finds its icons already. This leaves room for other words.
  */
 export function decodePredictions(units: QueryUnit[], scored: ScoredWord[], limit: number, minScore: number): Prediction[] {
   const typed = new Set(units.flatMap(unit => unit.words))
@@ -95,7 +108,17 @@ export function decodePredictions(units: QueryUnit[], scored: ScoredWord[], limi
       kind: kindOf(from, word),
     })
   }
-  return [
+  const kept: Prediction[] = []
+  const words = new Set<string>()
+  for (const prediction of [
     ...best.values(),
-  ].sort((a, b) => b.score - a.score).slice(0, limit)
+  ].sort((a, b) => b.score - a.score)) {
+    if (kept.length >= limit)
+      break
+    if (containsOneOf(prediction.word, typed) || containsOneOf(prediction.word, words))
+      continue
+    kept.push(prediction)
+    words.add(prediction.word)
+  }
+  return kept
 }
