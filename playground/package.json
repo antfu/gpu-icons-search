@@ -1,0 +1,27 @@
+{
+  "name": "@gpu-icons-search/playground",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Compare gpu-icons-search with the current Icones search",
+  "scripts": {
+    "prepare-data": "tsx scripts/prepare.ts",
+    "dev": "tsx scripts/prepare.ts && vite",
+    "build": "tsx scripts/prepare.ts && vite build",
+    "typecheck": "vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "iconify-icon": "catalog:frontend",
+    "vue": "catalog:frontend"
+  },
+  "devDependencies": {
+    "@iconify/json": "catalog:data",
+    "@types/node": "catalog:types",
+    "@vitejs/plugin-vue": "catalog:frontend",
+    "tsx": "catalog:cli",
+    "typescript": "catalog:cli",
+    "unocss": "catalog:frontend",
+    "vite": "catalog:cli",
+    "vue-tsc": "catalog:frontend"
+  }
+}

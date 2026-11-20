@@ -28,6 +28,12 @@
       "ignoreBinaries": [
         "uv"
       ]
+    },
+    "playground": {
+      "project": [
+        "src/**/*.{ts,vue}",
+        "scripts/**/*.ts"
+      ]
     }
   }
 }

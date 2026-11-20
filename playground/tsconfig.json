@@ -1,0 +1,11 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "gpu-icons-search": ["../src/index.ts"],
+      "gpu-icons-search/fallback": ["../src/fallback.ts"]
+    },
+    "types": ["node", "vite/client"]
+  },
+  "include": ["src", "scripts", "*.ts"]
+}
