@@ -88,10 +88,10 @@ def main() -> None:
     parser.add_argument("--dim", type=int, default=32)
     parser.add_argument("--hidden", type=int, default=64)
     parser.add_argument("--steps", type=int, default=20000)
-    parser.add_argument("--prefix", type=float, default=0.25, help="share of single words that are cut")
-    parser.add_argument("--typo", type=float, default=0.25, help="share of single words that are misspelled")
+    parser.add_argument("--prefix", type=float, default=0.3, help="share of single words that are cut")
+    parser.add_argument("--typo", type=float, default=0.4, help="share of single words that are misspelled")
     parser.add_argument("--batch", type=int, default=1024)
-    parser.add_argument("--lr", type=float, default=3e-3)
+    parser.add_argument("--lr", type=float, default=6e-3)
     parser.add_argument("--seed", type=int, default=1)
     parser.add_argument(
         "--bits", type=int, default=6, choices=[6, 32], help="bits per weight of the two tables"
