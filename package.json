@@ -17,6 +17,7 @@
   "sideEffects": false,
   "exports": {
     ".": "./dist/index.mjs",
+    "./fallback": "./dist/fallback.mjs",
     "./package.json": "./package.json"
   },
   "types": "./dist/index.d.mts",
