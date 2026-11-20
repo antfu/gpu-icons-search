@@ -4,7 +4,7 @@ import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 import process from 'node:process'
 import { splitWords } from './iconify'
-import { cacheDir, readJSON, writeJSON } from './paths'
+import { cacheDir, dataDir, readJSON, readJSONL, writeJSON } from './paths'
 import { buildWordTable, collectWordGroups } from './table'
 import { readTrainingTags } from './tags'
 import { embed, nearest } from './teacher'
@@ -49,9 +49,16 @@ export interface TargetOptions {
   tagPower: number
   /** Weight of the neighbors of neighbors, relative to direct neighbors. 0 turns them off. */
   secondHopWeight: number
+  /** Weight of a pair that Claude wrote, relative to the best neighbor from the tags. 0 turns stage 2 off. */
+  claudeWeight: number
 }
 
-export const DEFAULT_TARGET_OPTIONS: TargetOptions = { teacherWeight: 0.25, tagPower: 0.5, secondHopWeight: 0 }
+export const DEFAULT_TARGET_OPTIONS: TargetOptions = {
+  teacherWeight: 0.25,
+  tagPower: 0.5,
+  secondHopWeight: 0,
+  claudeWeight: 1,
+}
 
 export interface TrainingQuery {
   /** One word, or a phrase of several words */
@@ -129,6 +136,64 @@ function phraseTargets(vocabulary: Set<string>): Map<string, Map<string, number>
   return phrases
 }
 
+/** One line of `data/claude/pairs.jsonl`: what users type for an icon word */
+interface WrittenEntry {
+  word: string
+  queries: string[]
+  descriptions: string[]
+  opposites: string[]
+}
+
+interface WrittenPairs {
+  /** For a single query word, the words that it must find */
+  words: Map<string, Map<string, number>>
+  /** For a phrase or a description, the words that it must find */
+  phrases: Map<string, Map<string, number>>
+  /** Pairs of words that must not find each other, as `first second` in both orders */
+  opposites: Set<string>
+}
+
+function addPair(pairs: Map<string, Map<string, number>>, query: string, target: string, weight: number): void {
+  let targets = pairs.get(query)
+  if (!targets)
+    pairs.set(query, targets = new Map())
+  targets.set(target, (targets.get(target) ?? 0) + weight)
+}
+
+/** Read the stage 2 pairs that the Claude script wrote. The result is empty if the file does not exist. */
+function loadWrittenPairs(vocabulary: Set<string>): WrittenPairs {
+  const pairs: WrittenPairs = {
+    words: new Map(),
+    phrases: new Map(),
+    opposites: new Set(),
+  }
+  const file = join(dataDir, 'claude', 'pairs.jsonl')
+  const entries = existsSync(file)
+    ? readJSONL<WrittenEntry>(file)
+    : []
+  for (const { word, queries, descriptions, opposites } of entries.filter(entry => vocabulary.has(entry.word))) {
+    for (const text of [
+      ...queries,
+      ...descriptions,
+    ]) {
+      const words = splitWords(text).filter(part => part !== word)
+      if (words.length === 1) {
+        addPair(pairs.words, words[0]!, word, 1)
+        if (vocabulary.has(words[0]!))
+          addPair(pairs.words, word, words[0]!, 1)
+      }
+      else if (words.length > 1 && words.length <= 12) {
+        addPair(pairs.phrases, splitWords(text).join(' '), word, 2)
+      }
+    }
+    for (const opposite of opposites.flatMap(splitWords)) {
+      pairs.opposites.add(`${word} ${opposite}`)
+      pairs.opposites.add(`${opposite} ${word}`)
+    }
+  }
+  return pairs
+}
+
 function toTargets(weights: Map<string, number>, index: Map<string, number>): TrainingQuery['targets'] {
   return [
     ...weights.entries(),
@@ -142,9 +207,10 @@ function toTargets(weights: Map<string, number>, index: Map<string, number>): Tr
 }
 
 /**
- * Build the training targets of stage 1.
- * A single word points to itself, to the words that share icons with it, and to its teacher neighbors.
- * A phrase tag points to the name words of the icons that carry it.
+ * Build the training targets.
+ * A single word points to itself, to the words that share icons with it, to its teacher neighbors,
+ * and to the words of the stage 2 pairs. A phrase points to the name words of the icons that carry it as a tag,
+ * or to the word that Claude wrote it for.
  */
 export async function buildTrainingData(options: TargetOptions = DEFAULT_TARGET_OPTIONS): Promise<TrainingData> {
   const vocabulary = readJSON<string[]>(join(cacheDir, 'vocabulary.json'))
@@ -157,10 +223,14 @@ export async function buildTrainingData(options: TargetOptions = DEFAULT_TARGET_
       groupCount.set(word, (groupCount.get(word) ?? 0) + 1)
   }
   const tagTable = buildWordTable(groups, inVocabulary, TABLE_NEIGHBORS)
+  const written = loadWrittenPairs(inVocabulary)
   const words = [
     ...new Set([
       ...vocabulary,
       ...tagTable.keys(),
+      ...(options.claudeWeight > 0
+        ? written.words.keys()
+        : []),
     ]),
   ]
   const teacher = await teacherTable(words, vocabulary)
@@ -172,6 +242,14 @@ export async function buildTrainingData(options: TargetOptions = DEFAULT_TARGET_
       addWeight(weights, related, score ** options.tagPower)
     for (const { word: related, score } of teacher.get(word) ?? [])
       addWeight(weights, related, options.teacherWeight * score)
+    if (options.claudeWeight > 0) {
+      for (const [related, weight] of written.words.get(word) ?? [])
+        addWeight(weights, related, options.claudeWeight * Math.min(weight, 2))
+      for (const related of [
+        ...weights.keys(),
+      ].filter(related => written.opposites.has(`${word} ${related}`)))
+        weights.delete(related)
+    }
     return [word, weights]
   }))
 
@@ -193,7 +271,14 @@ export async function buildTrainingData(options: TargetOptions = DEFAULT_TARGET_
       targets: toTargets(weights, index),
     }
   })
-  for (const [phrase, weights] of phraseTargets(inVocabulary)) {
+  const phrases = phraseTargets(inVocabulary)
+  if (options.claudeWeight > 0) {
+    for (const [phrase, targets] of written.phrases) {
+      for (const [target, weight] of targets)
+        addPair(phrases, phrase, target, options.claudeWeight * weight)
+    }
+  }
+  for (const [phrase, weights] of phrases) {
     const best = Math.max(...weights.values())
     const scaled = new Map([...weights].map(([word, weight]) => [word, weight / best]))
     if (scaled.size > 0) {
