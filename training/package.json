@@ -1,0 +1,27 @@
+{
+  "name": "@gpu-icons-search/training",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Offline pipeline: data, benchmark, training, evaluation and promotion",
+  "scripts": {
+    "data": "tsx src/data.ts",
+    "typecheck": "tsc"
+  },
+  "devDependencies": {
+    "@carbon/icons": "catalog:data",
+    "@fortawesome/fontawesome-free": "catalog:data",
+    "@iconify/json": "catalog:data",
+    "@mdi/svg": "catalog:data",
+    "@phosphor-icons/core": "catalog:data",
+    "@primer/octicons": "catalog:data",
+    "@tabler/icons": "catalog:data",
+    "@types/node": "catalog:types",
+    "fzf": "catalog:training",
+    "ionicons": "catalog:data",
+    "lucide-static": "catalog:data",
+    "tsx": "catalog:cli",
+    "typescript": "catalog:cli",
+    "yaml": "catalog:training"
+  }
+}

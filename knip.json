@@ -1,5 +1,31 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
-  "project": ["src/**/*.ts"],
-  "ignoreDependencies": ["@antfu/utils", "taze", "@antfu/skills"]
+  "workspaces": {
+    ".": {
+      "project": [
+        "src/**/*.ts"
+      ],
+      "ignoreDependencies": [
+        "@antfu/utils",
+        "taze",
+        "@antfu/skills"
+      ]
+    },
+    "training": {
+      "project": [
+        "src/**/*.ts"
+      ],
+      "ignoreDependencies": [
+        "@carbon/icons",
+        "@fortawesome/fontawesome-free",
+        "@iconify/json",
+        "@mdi/svg",
+        "@primer/octicons",
+        "@tabler/icons",
+        "ionicons",
+        "lucide-static",
+        "fzf"
+      ]
+    }
+  }
 }

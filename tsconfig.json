@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "lib": ["ESNext"],
+    "lib": [
+      "ESNext"
+    ],
     "module": "Preserve",
     "strict": true,
     "strictNullChecks": true,
@@ -10,5 +12,10 @@
     "verbatimModuleSyntax": true,
     "skipDefaultLibCheck": true,
     "skipLibCheck": true
-  }
+  },
+  "include": [
+    "src",
+    "test",
+    "*.ts"
+  ]
 }
