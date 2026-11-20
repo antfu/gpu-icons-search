@@ -29,3 +29,7 @@ export function writeJSONL(file: string, rows: unknown[]): void {
   mkdirSync(dirname(file), { recursive: true })
   writeFileSync(file, rows.map(row => `${JSON.stringify(row)}\n`).join(''))
 }
+
+export function readJSONL<T>(file: string): T[] {
+  return readFileSync(file, 'utf8').split('\n').filter(Boolean).map(line => JSON.parse(line) as T)
+}

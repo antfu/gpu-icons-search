@@ -1,9 +1,9 @@
 import { readdirSync, readFileSync } from 'node:fs'
 import { basename, join } from 'node:path'
 import { parse as parseYaml } from 'yaml'
-import { packageDir, readJSON } from './paths'
+import { cacheDir, packageDir, readJSON, readJSONL } from './paths'
 
-interface TaggedIcon {
+export interface TaggedIcon {
   /** Id of the tag source, for example `lucide` */
   source: string
   /** Icon name in the source */
@@ -121,4 +121,39 @@ export function tagLoaders(pinned: Record<string, string>): Record<string, Loade
     'bootstrap': () => bootstrap(pinned.bootstrap!),
     'fluent': () => fluent(pinned.fluent!),
   }
+}
+
+/**
+ * Tag sources that training never reads.
+ * The `transfer` test set uses their tags as queries.
+ */
+export const HELD_OUT_SOURCES = ['phosphor', 'bootstrap']
+
+/** The Iconify prefix that holds the icons of a held-out tag source */
+export const HELD_OUT_PREFIX: Record<string, string> = { phosphor: 'ph', bootstrap: 'bi' }
+
+/** Read the tags that the data script wrote to the cache */
+export function readTags(source: string): TaggedIcon[] {
+  return readJSONL<TaggedIcon>(join(cacheDir, 'tags', `${source}.jsonl`))
+}
+
+const TAG_SOURCES = [
+  'lucide',
+  'tabler',
+  'mdi',
+  'phosphor',
+  'fontawesome',
+  'octicons',
+  'ionicons',
+  'carbon',
+  'remix',
+  'feather',
+  'material-symbols',
+  'bootstrap',
+  'fluent',
+]
+
+/** Read the tags of every source that training can use */
+export function readTrainingTags(): TaggedIcon[] {
+  return TAG_SOURCES.filter(source => !HELD_OUT_SOURCES.includes(source)).flatMap(readTags)
 }
