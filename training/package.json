@@ -5,15 +5,16 @@
   "private": true,
   "description": "Offline pipeline: data, benchmark, training, evaluation and promotion",
   "scripts": {
-    "data": "tsx src/data.ts",
-    "targets": "tsx src/targets.ts",
-    "train": "uv run --locked python torch/train.py",
-    "bench:build": "tsx src/bench/build.ts",
     "bench": "tsx src/bench/run.ts",
-    "bench:teachers": "tsx src/bench/teachers.ts",
+    "bench:build": "tsx src/bench/build.ts",
     "bench:model": "tsx src/bench/model.ts",
-    "test:python": "uv run --locked pytest -q",
+    "bench:teachers": "tsx src/bench/teachers.ts",
+    "data": "tsx src/data.ts",
     "lint:python": "uv run --locked ruff check torch",
+    "parity": "tsx src/parity.ts",
+    "targets": "tsx src/targets.ts",
+    "test:python": "uv run --locked pytest -q",
+    "train": "uv run --locked python torch/train.py",
     "typecheck": "tsc"
   },
   "devDependencies": {
@@ -31,6 +32,7 @@
     "lucide-static": "catalog:data",
     "tsx": "catalog:cli",
     "typescript": "catalog:cli",
+    "webgpu": "catalog:training",
     "yaml": "catalog:training"
   }
 }
