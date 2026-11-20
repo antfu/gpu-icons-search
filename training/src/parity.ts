@@ -8,7 +8,7 @@ import { cacheDir, readJSON } from './paths'
 import { encodeUnit, loadModel, topWords } from './reference'
 
 /** Scores of two runtimes can differ by this much: float32 rounding and four stored decimals */
-const TOLERANCE = 2e-4
+export const TOLERANCE = 2e-4
 
 interface Fixture {
   /** The words of one query */
