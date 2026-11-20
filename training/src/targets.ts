@@ -13,7 +13,7 @@ import { embed, nearest } from './teacher'
 export const TEACHER = 'Xenova/bge-small-en-v1.5'
 
 /** Words that name a drawing style. They say nothing about the meaning of an icon. */
-const STYLE_WORDS = new Set([
+export const STYLE_WORDS = new Set([
   'outline',
   'outlined',
   'fill',

@@ -32,7 +32,7 @@ export function splitWords(text: string): string[] {
   return text.toLowerCase().match(/[a-z0-9]+/g) ?? []
 }
 
-function loadCollections(): Record<string, IconSetInfo> {
+export function loadCollections(): Record<string, IconSetInfo> {
   return readJSON<Record<string, IconSetInfo>>(join(root, 'collections.json'))
 }
 
