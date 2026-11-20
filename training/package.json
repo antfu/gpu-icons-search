@@ -6,6 +6,8 @@
   "description": "Offline pipeline: data, benchmark, training, evaluation and promotion",
   "scripts": {
     "data": "tsx src/data.ts",
+    "bench:build": "tsx src/bench/build.ts",
+    "bench": "tsx src/bench/run.ts",
     "typecheck": "tsc"
   },
   "devDependencies": {

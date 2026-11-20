@@ -34,7 +34,9 @@
     "test": "pnpm run build && vitest",
     "typecheck": "tsc && pnpm -r run typecheck",
     "ci": "pnpm run lint && pnpm run typecheck && pnpm run knip && pnpm run test --run",
-    "prepare": "git config core.hooksPath .githooks && simple-git-hooks && skills sync -y"
+    "prepare": "git config core.hooksPath .githooks && simple-git-hooks && skills sync -y",
+    "data": "pnpm -C training run data",
+    "bench": "pnpm -C training run bench"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:cli",
