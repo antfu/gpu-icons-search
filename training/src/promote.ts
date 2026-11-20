@@ -19,6 +19,12 @@ const ALIASES_PER_WORD = 6
 /** The baseline that a candidate must beat */
 const BASELINE = 'fzf+alias'
 
+/**
+ * The `alias` test set is the alias list that `fzf+alias` itself uses, so that baseline holds the answers.
+ * The maintainer decided on 2026-11-20 to compare this set with the tag table instead.
+ */
+const ALIAS_BASELINE = 'fzf+table'
+
 /** Folder of the published weights, at the root of the repository */
 const weightsDir = join(trainingRoot, '..', 'weights')
 const qualityFile = join(trainingRoot, 'quality.json')
@@ -37,13 +43,15 @@ function percent(value: number): string {
 
 function checkGates(evaluation: Evaluation, floors: Floors): Gate[] {
   const model = evaluation.bench[MODEL_METHOD]!
-  const baseline = evaluation.bench[BASELINE]!
   const gates: Gate[] = []
   for (const [set, score] of Object.entries(model) as [BenchSet | 'overall', { found: number }][]) {
-    const target = baseline[set]!.found
+    const name = set === 'alias'
+      ? ALIAS_BASELINE
+      : BASELINE
+    const target = evaluation.bench[name]![set]!.found
     gates.push(set === 'overall'
-      ? { rule: `overall: ${percent(score.found)} is above ${BASELINE} at ${percent(target)}`, pass: score.found > target }
-      : { rule: `${set}: ${percent(score.found)} is not below ${BASELINE} at ${percent(target)}`, pass: score.found >= target })
+      ? { rule: `overall: ${percent(score.found)} is above ${name} at ${percent(target)}`, pass: score.found > target }
+      : { rule: `${set}: ${percent(score.found)} is not below ${name} at ${percent(target)}`, pass: score.found >= target })
     const floor = floors[set]
     if (floor !== undefined)
       gates.push({ rule: `${set}: ${percent(score.found)} is not below the last promoted model at ${percent(floor)}`, pass: score.found >= floor })
@@ -98,10 +106,12 @@ function main(): void {
   const training = existsSync(join(dir, 'report.json'))
     ? readJSON<unknown>(join(dir, 'report.json'))
     : undefined
+  // The list of missed queries is large, and only the playground needs it
+  const scores = { ...evaluation, misses: undefined }
   writeJSON(join(weightsDir, 'report.json'), {
     sha256,
     promoted: new Date().toISOString(),
-    evaluation,
+    evaluation: scores,
     training,
   })
   const model = evaluation.bench[MODEL_METHOD]!

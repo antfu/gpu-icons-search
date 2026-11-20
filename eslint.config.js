@@ -7,7 +7,7 @@ export default antfu(
     pnpm: true,
     antislop: true,
     vue: true,
-    ignores: ['playground/index.html', 'playground/public/data'],
+    ignores: ['playground/index.html', 'playground/public/data', 'weights'],
   },
   {
     // The training package holds command line scripts, which report progress on stdout
