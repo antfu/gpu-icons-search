@@ -11,7 +11,7 @@ A small model that runs on WebGPU and predicts related icon words for a search q
 The model only predicts words. Your own text matcher, for example fzf, still finds the icons. [Icones](https://github.com/antfu-collective/icones) is the first intended user: the predictions replace its manual alias list.
 
 > [!WARNING]
-> This project is experimental. No model passes the ship gate yet, so the package has no published weights. See [MODEL_CARD.md](./MODEL_CARD.md) for the current scores.
+> This project is experimental and not published to npm yet. See [MODEL_CARD.md](./MODEL_CARD.md) for the scores and the limits of the current model.
 
 ## Usage
 

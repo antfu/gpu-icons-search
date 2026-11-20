@@ -23,6 +23,10 @@ Training reads icon names from Iconify, and search keywords that icon set author
 
 Font Awesome Free requires attribution: the search terms come from Font Awesome Free 7.3.1 by Fonticons, Inc. (https://fontawesome.com).
 
+## Written data
+
+`claude-opus-5-5` wrote the search terms in `training/data/claude/pairs.jsonl` and the test queries in `training/data/bench/written.jsonl`, through the Claude API of Anthropic.
+
 ## Teacher model
 
 Training copies word similarity from [BAAI/bge-small-en-v1.5](https://huggingface.co/BAAI/bge-small-en-v1.5), in the ONNX conversion [Xenova/bge-small-en-v1.5](https://huggingface.co/Xenova/bge-small-en-v1.5). Its license is MIT.

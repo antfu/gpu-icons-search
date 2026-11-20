@@ -2,7 +2,9 @@
 
 ## Status
 
-No model is promoted. The best candidate of 2026-11-20 fails one rule of the ship gate, so the package has no weights in `weights/`. The candidate is not in the repository. The commands in the last section rebuild it in about 25 minutes on a 10-core CPU.
+The model in `weights/` was promoted on 2026-11-20. Its SHA-256 starts with `7199724eff08`. `weights/report.json` records its scores and training settings.
+
+The package is not published. Nobody tested the model on a real GPU yet.
 
 ## Architecture
 
@@ -49,19 +51,20 @@ The ship gate gives this result:
 | Rule | Result |
 | --- | --- |
 | Overall score above `fzf+alias` | Pass |
-| `alias` not below `fzf+alias` | Fail: 71.5% against 93.2% |
+| `alias` not below `fzf+table` | Pass: 71.5% against 69.2% |
 | `transfer` not below `fzf+alias` | Pass |
 | `typing` not below `fzf+alias` | Pass |
 | `written` not below `fzf+alias` | Pass |
 | WebGPU output matches the PyTorch fixtures | Pass: the largest difference is 0.00005 |
 | Compressed size within 1 MB | Pass: 841,241 bytes with Brotli |
 
-The `alias` test set comes from the manual alias list of Icones. The `fzf+alias` baseline uses that same list, so it holds the answers of this test set.
+The `alias` test set comes from the manual alias list of Icones. The `fzf+alias` baseline uses that same list, so it holds the answers of this test set. The maintainer decided on 2026-11-20 to compare this set with `fzf+table` instead. The model finds 71.5% of the alias pairs, and the manual list finds 93.2%. A host that replaces the manual list with the model loses that difference.
 
 Other measurements:
 
 - A warm `predict` call takes 0.97 ms on the software GPU. No measurement on a real GPU exists.
 - The weight file is 960,672 bytes. The word list takes about 100,000 of them.
+- The alias table for browsers without WebGPU is 188,462 bytes, or 67,486 bytes with gzip. It covers the 4,000 most frequent words.
 - For the stage 1 candidate and 600 common words, the intended word is in the top 8 predictions for 89% of the prefixes and for 34% of the misspellings.
 
 `training/data/sweep.json` compares three model sizes at 8,000 steps with stage 1 data. The scores rise with the size up to the 1 MB limit.
@@ -83,7 +86,7 @@ The ablation added the name words of each pair to the tag table. The scores went
 
 The plan asks for a discussion if the model does not clearly win against `fzf+table` on test sets 2 to 4. With stage 1 data, the model won only on `typing`. With stage 2 data, it wins on all four sets.
 
-One rule of the ship gate still fails: `alias`. Two changes of the integration can raise that score. Each one needs a decision of the maintainer:
+The `alias` score stays below the manual list. Two changes of the integration can raise it. Each one needs a decision of the maintainer:
 
 - Interleave the results of the predicted words. With one block per predicted word, the first word can fill the whole first screen. In an offline measurement on an earlier candidate, interleaving lifts `alias` from 64% to 70%.
 - Return more predictions. With 12 words instead of 8, an earlier candidate gains about 5 points on `alias` and about 4 on `transfer`.

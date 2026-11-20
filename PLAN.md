@@ -278,6 +278,8 @@ The implementation changed these points of the plan. `MODEL_CARD.md` has the cur
 - The word features are the whole word, the word with each single letter removed, every prefix, and every piece of three characters.
 - The teacher model is `bge-small-en-v1.5`. As a direct predictor it scores below the tag table, so it is not an upper reference. Training uses it with a low weight.
 - The decoder drops a prediction that contains a shorter prediction, because a substring match of the shorter word finds the same icons.
+- The ship gate compares the `alias` test set with `fzf+table`, not with `fzf+alias`. That test set is the alias list of `fzf+alias` itself, and the best model finds 71.5% of it. The maintainer made this decision after the stage 2 results.
+- The alias table for browsers without WebGPU is 188 KB, or 67 KB with gzip. The plan estimated about 40 KB.
 
 The status of the milestones on 2026-11-20 is:
 
@@ -285,7 +287,7 @@ The status of the milestones on 2026-11-20 is:
 | --- | --- |
 | M0 | Complete. Test set 4 has 383 cases and waits for the review of the maintainer. |
 | M1 | Complete. The decision point applies: see `MODEL_CARD.md`. |
-| M2 | The runtime, `evaluate` and `promote` are complete. No candidate passes the ship gate, so no model is promoted. |
+| M2 | Complete. The first model is promoted to `weights/`. |
 | M3 | Complete. The review page is empty until test set 4 exists. |
 | M4 | Complete. Stage 2 raises every score, so training keeps it. |
 | M5 | Complete. The look-alike pairs lower the scores, so training does not read them. |
