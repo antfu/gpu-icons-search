@@ -1,0 +1,38 @@
+{
+  "bootstrap": {
+    "type": "git",
+    "repo": "https://github.com/twbs/icons.git",
+    "commit": "829d2bc2b87543c7d781c815ca4f0feee8cf9e45",
+    "paths": [
+      "docs/content/icons/*.md"
+    ],
+    "license": "MIT"
+  },
+  "fluent": {
+    "type": "git",
+    "repo": "https://github.com/microsoft/fluentui-system-icons.git",
+    "commit": "6c2c9075cf8952ef48369b2475233b6e9761efed",
+    "paths": [
+      "assets/*/metadata.json"
+    ],
+    "license": "MIT"
+  },
+  "remix": {
+    "type": "file",
+    "url": "https://raw.githubusercontent.com/Remix-Design/RemixIcon/9fb7967c0a4c09910161192bde99efd3df09f5eb/tags.json",
+    "sha256": "71d6fc27431b1abe205d725a01171c881a5ef4a32c08fe4c1f7e2cb0ec3d9225",
+    "license": "Remix Icon License v1.0"
+  },
+  "feather": {
+    "type": "file",
+    "url": "https://raw.githubusercontent.com/feathericons/feather/3dc050d97405062eba78aa57115c0a15c63abdaa/src/tags.json",
+    "sha256": "6113b740fbbf9debf372e7df32d684cfa825bdd13026655db1e96e78ab582398",
+    "license": "MIT"
+  },
+  "material-symbols": {
+    "type": "file",
+    "url": "https://fonts.google.com/metadata/icons?key=material_symbols&incomplete=true",
+    "sha256": "abc0e2ac9ec9b998e5689d70a8dafeb2bb19bee05b640a1d14d79e5bfbabefdb",
+    "license": "Apache-2.0"
+  }
+}
