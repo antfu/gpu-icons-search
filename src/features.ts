@@ -2,7 +2,7 @@
 const MAX_WORD_LENGTH = 24
 
 /** Most words of a query that the model reads */
-const MAX_QUERY_WORDS = 12
+export const MAX_QUERY_WORDS = 12
 
 /** Lengths of the character pieces of a word */
 const PIECE_LENGTHS = [2, 3, 4] as const

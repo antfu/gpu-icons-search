@@ -8,8 +8,28 @@ export interface Prediction {
   from: string;
   kind: PredictionKind;
 }
+export interface PredictOptions {
+  limit?: number;
+  minScore?: number;
+  signal?: AbortSignal;
+}
+export interface Predictor {
+  predict: (_: string, _?: PredictOptions) => Promise<Prediction[]>;
+  readonly vocabulary: readonly string[];
+  dispose: () => void;
+}
+export interface PredictorOptions {
+  weights?: ArrayBuffer | URL | string;
+  device?: GPUDevice;
+}
 // #endregion
 
 // #region Types
 export type PredictionKind = 'completion' | 'correction' | 'related';
+// #endregion
+
+// #region Functions
+export declare function createPredictor(_?: PredictorOptions): Promise<Predictor>;
+export declare function isSupported(): boolean;
+export declare function predict(_: string, _?: PredictOptions): Promise<Prediction[]>;
 // #endregion
