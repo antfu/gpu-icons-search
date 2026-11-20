@@ -15,6 +15,7 @@
     "lint:python": "uv run --locked ruff check torch",
     "parity": "tsx src/parity.ts",
     "promote": "tsx src/promote.ts",
+    "sweep": "tsx src/sweep.ts",
     "targets": "tsx src/targets.ts",
     "test:python": "uv run --locked pytest -q",
     "train": "uv run --locked python torch/train.py",
