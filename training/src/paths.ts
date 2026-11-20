@@ -3,7 +3,7 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 /** Root of the training workspace package */
-const trainingRoot = fileURLToPath(new URL('..', import.meta.url))
+export const trainingRoot = fileURLToPath(new URL('..', import.meta.url))
 
 /** Git-ignored folder for everything that scripts can regenerate */
 export const cacheDir = join(trainingRoot, '.cache')
