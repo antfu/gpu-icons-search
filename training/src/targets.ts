@@ -1,4 +1,6 @@
 import type { RelatedWord, WordTable } from './table'
+import { createHash } from 'node:crypto'
+import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 import process from 'node:process'
 import { splitWords } from './iconify'
@@ -38,9 +40,18 @@ const STYLE_WORDS = new Set([
 
 const TABLE_NEIGHBORS = 32
 const TEACHER_NEIGHBORS = 12
-/** Weight of the best teacher neighbor, relative to the best neighbor from the tags */
-const TEACHER_WEIGHT = 0.5
 const TARGETS_PER_QUERY = 32
+
+export interface TargetOptions {
+  /** Weight of the best teacher neighbor, relative to the best neighbor from the tags */
+  teacherWeight: number
+  /** Exponent on the relative tag score. A smaller value lifts weaker neighbors. */
+  tagPower: number
+  /** Weight of the neighbors of neighbors, relative to direct neighbors. 0 turns them off. */
+  secondHopWeight: number
+}
+
+export const DEFAULT_TARGET_OPTIONS: TargetOptions = { teacherWeight: 0.5, tagPower: 0.5, secondHopWeight: 0 }
 
 export interface TrainingQuery {
   /** One word, or a phrase of several words */
@@ -67,8 +78,20 @@ function relative(neighbors: RelatedWord[]): RelatedWord[] {
   return neighbors.map(({ word, score }) => ({ word, score: score / best }))
 }
 
-/** For each word, its closest words of the vocabulary by teacher embedding */
+/** For each word, its closest words of the vocabulary by teacher embedding. The result is kept in the cache folder. */
 async function teacherTable(words: string[], vocabulary: string[]): Promise<WordTable> {
+  const file = join(cacheDir, 'train', 'teacher-table.json')
+  const key = createHash('sha256').update(JSON.stringify([
+    TEACHER,
+    TEACHER_NEIGHBORS,
+    words,
+    vocabulary,
+  ])).digest('hex')
+  if (existsSync(file)) {
+    const cached = readJSON<{ key: string, table: [string, RelatedWord[]][] }>(file)
+    if (cached.key === key)
+      return new Map(cached.table)
+  }
   const targets = await embed(TEACHER, vocabulary, 'vocabulary')
   const queries = await embed(TEACHER, words, 'queries')
   const table: WordTable = new Map()
@@ -78,6 +101,10 @@ async function teacherTable(words: string[], vocabulary: string[]): Promise<Word
       .slice(0, TEACHER_NEIGHBORS)
     // Similarities of single words sit in a narrow band. The rank spreads them out.
     table.set(word, neighbors.map((neighbor, rank) => ({ word: vocabulary[neighbor.index]!, score: 1 - rank / TEACHER_NEIGHBORS })))
+  })
+  writeJSON(file, {
+    key,
+    table: [...table],
   })
   return table
 }
@@ -119,7 +146,7 @@ function toTargets(weights: Map<string, number>, index: Map<string, number>): Tr
  * A single word points to itself, to the words that share icons with it, and to its teacher neighbors.
  * A phrase tag points to the name words of the icons that carry it.
  */
-export async function buildTrainingData(): Promise<TrainingData> {
+export async function buildTrainingData(options: TargetOptions = DEFAULT_TARGET_OPTIONS): Promise<TrainingData> {
   const vocabulary = readJSON<string[]>(join(cacheDir, 'vocabulary.json'))
   const inVocabulary = new Set(vocabulary)
   const index = new Map(vocabulary.map((word, i) => [word, i]))
@@ -138,14 +165,28 @@ export async function buildTrainingData(): Promise<TrainingData> {
   ]
   const teacher = await teacherTable(words, vocabulary)
 
-  const queries: TrainingQuery[] = words.map((word) => {
+  /** Direct neighbors of a word, from the tags and from the teacher */
+  const direct = new Map(words.map((word) => {
     const weights = new Map<string, number>()
-    if (inVocabulary.has(word))
-      weights.set(word, 1)
     for (const { word: related, score } of relative(tagTable.get(word) ?? []))
-      addWeight(weights, related, Math.sqrt(score))
+      addWeight(weights, related, score ** options.tagPower)
     for (const { word: related, score } of teacher.get(word) ?? [])
-      addWeight(weights, related, TEACHER_WEIGHT * score)
+      addWeight(weights, related, options.teacherWeight * score)
+    return [word, weights]
+  }))
+
+  const queries: TrainingQuery[] = words.map((word) => {
+    const weights = new Map(direct.get(word))
+    if (options.secondHopWeight > 0) {
+      for (const [middle, first] of direct.get(word)!) {
+        for (const [related, second] of direct.get(middle) ?? []) {
+          if (related !== word)
+            addWeight(weights, related, options.secondHopWeight * first * second)
+        }
+      }
+    }
+    if (inVocabulary.has(word))
+      weights.set(word, Math.max(1, ...weights.values()))
     return {
       text: word,
       weight: Math.sqrt(1 + (groupCount.get(word) ?? 0)),
