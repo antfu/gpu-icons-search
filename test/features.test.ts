@@ -18,27 +18,32 @@ describe('wordFeatures', () => {
   it('returns stable rows inside the table', () => {
     expect(wordFeatures('home', 16384)).toMatchInlineSnapshot(`
       [
-        6535,
-        11704,
-        15250,
-        2655,
-        3694,
-        15790,
+        10408,
+        786,
+        15967,
+        9273,
+        9618,
+        14103,
+        7375,
+        15096,
         12785,
         7683,
         3290,
         1956,
-        2323,
-        10908,
-        14173,
       ]
     `)
     expect(wordFeatures('a'.repeat(24), 1024).length).toBe(MAX_WORD_FEATURES)
   })
 
+  it('shares features between a word and its misspelling', () => {
+    const full = new Set(wordFeatures('home', 1 << 20))
+    const shared = wordFeatures('hoem', 1 << 20).filter(row => full.has(row))
+    expect(shared.length).toBe(4)
+  })
+
   it('shares most features between a word and its prefix', () => {
     const full = new Set(wordFeatures('home', 1 << 20))
     const shared = wordFeatures('hom', 1 << 20).filter(row => full.has(row))
-    expect(shared.length).toBe(6)
+    expect(shared.length).toBe(5)
   })
 })
