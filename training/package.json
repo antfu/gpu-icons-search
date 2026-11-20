@@ -9,6 +9,7 @@
     "bench:build": "tsx src/bench/build.ts",
     "bench:model": "tsx src/bench/model.ts",
     "bench:teachers": "tsx src/bench/teachers.ts",
+    "claude": "tsx src/claude.ts",
     "data": "tsx src/data.ts",
     "evaluate": "tsx src/evaluate.ts",
     "lint:python": "uv run --locked ruff check torch",
@@ -20,6 +21,7 @@
     "typecheck": "tsc"
   },
   "devDependencies": {
+    "@anthropic-ai/sdk": "catalog:training",
     "@carbon/icons": "catalog:data",
     "@fortawesome/fontawesome-free": "catalog:data",
     "@huggingface/transformers": "catalog:training",
@@ -35,6 +37,7 @@
     "tsx": "catalog:cli",
     "typescript": "catalog:cli",
     "webgpu": "catalog:training",
-    "yaml": "catalog:training"
+    "yaml": "catalog:training",
+    "zod": "catalog:training"
   }
 }
