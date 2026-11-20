@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { BenchSet } from '../../../training/src/bench/cases'
 import type { Evaluation } from '../../../training/src/evaluate'
+import type { SweepEntry } from '../../../training/src/sweep'
 import { computed, onMounted, ref } from 'vue'
-import { loadEvaluation } from '../data'
+import { loadEvaluation, loadSweep } from '../data'
 
 const emit = defineEmits<{ open: [target: { prefix: string, query: string }] }>()
 
@@ -16,12 +17,14 @@ const SETS: (BenchSet | 'overall')[] = [
 const SHOWN_MISSES = 200
 
 const evaluation = ref<Evaluation>()
+const sweep = ref<SweepEntry[]>([])
 const loaded = ref(false)
 const missSet = ref<BenchSet>('alias')
 const onlyRegressions = ref(false)
 
 onMounted(async () => {
   evaluation.value = await loadEvaluation()
+  sweep.value = await loadSweep()
   loaded.value = true
 })
 
@@ -103,6 +106,49 @@ function expected(miss: Evaluation['misses'][number]): string {
         </dt>
         <dd>{{ evaluation.latencyMs }} ms median on that adapter</dd>
       </dl>
+    </section>
+
+    <section v-if="sweep.length > 0" class="panel mt-4 p-4">
+      <h2 class="mb-1 text-sm font-semibold">
+        Size against score
+      </h2>
+      <p class="mb-3 text-xs muted">
+        The same training at {{ sweep[0]!.steps }} steps for each size, scored with the reference implementation.
+      </p>
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="text-left muted">
+            <th class="py-1 font-normal">
+              Feature rows
+            </th>
+            <th class="py-1 font-normal">
+              Vector length
+            </th>
+            <th class="py-1 text-right font-normal">
+              Weight file
+            </th>
+            <th v-for="set in Object.keys(sweep[0]!.found)" :key="set" class="py-1 text-right font-normal">
+              {{ set }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="entry in sweep" :key="entry.bytes" class="border-t border-neutral-200 font-mono dark:border-neutral-800">
+            <td class="py-1">
+              {{ entry.rows }}
+            </td>
+            <td class="py-1">
+              {{ entry.dim }}
+            </td>
+            <td class="py-1 text-right">
+              {{ Math.round(entry.bytes / 1024) }} KB
+            </td>
+            <td v-for="(value, set) in entry.found" :key="set" class="py-1 text-right">
+              {{ percent(value) }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </section>
 
     <section class="panel mt-4 p-4">

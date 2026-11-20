@@ -2,6 +2,7 @@ import type { Prediction, Predictor } from 'gpu-icons-search'
 import type { AliasTable } from 'gpu-icons-search/fallback'
 import type { BenchCase } from '../../training/src/bench/cases'
 import type { Evaluation } from '../../training/src/evaluate'
+import type { SweepEntry } from '../../training/src/sweep'
 import { createPredictor, isSupported } from 'gpu-icons-search'
 import { loadAliasTable, predictFromTable } from 'gpu-icons-search/fallback'
 import { IconSearch } from '../../training/src/search'
@@ -41,6 +42,10 @@ export function loadSearch(prefix: string): Promise<IconSearch> {
 
 export function loadEvaluation(): Promise<Evaluation | undefined> {
   return fetchJSON<Evaluation>('evaluation.json')
+}
+
+export function loadSweep(): Promise<SweepEntry[]> {
+  return fetchJSON<SweepEntry[]>('sweep.json').then(entries => entries ?? [])
 }
 
 export function loadWrittenCases(): Promise<BenchCase[]> {
