@@ -1,10 +1,10 @@
-import type { Predictor } from '../search'
+import type { Predictor, SearchResult } from '../search'
 import type { BenchCase, BenchSet } from './cases'
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { loadIconSets } from '../iconify'
 import { cacheDir, readJSON, readJSONL, writeJSON } from '../paths'
-import { IconSearch } from '../search'
+import { IconSearch, isTypedWord } from '../search'
 import { buildWordTable, collectWordGroups, tablePredictor } from '../table'
 import { readTrainingTags } from '../tags'
 import { benchFile, loadAliasGroups } from './build'
@@ -25,15 +25,16 @@ const BENCH_SETS: BenchSet[] = [
 
 export interface Method {
   name: string
-  search: (icons: IconSearch, query: string) => string[]
+  search: (icons: IconSearch, query: string) => SearchResult[]
 }
 
 export interface Score {
   cases: number
   /**
    * Share of cases with a correct icon on the first screen.
-   * The matches of the typed text and the other matches count as two lists,
+   * The matches of the typed text and the matches of related words count as two lists,
    * because the reference integration shows the matches of the typed text first.
+   * The matches of a correction or a completion belong to the typed text.
    */
   found: number
   /** Mean of 1 divided by the rank of the first correct icon, in the better of the two lists */
@@ -54,11 +55,11 @@ export function baselineMethods(): Method[] {
   return [
     {
       name: 'fzf',
-      search: (icons, query) => icons.icones(query),
+      search: (icons, query) => icons.icones(query).map(icon => ({ icon })),
     },
     {
       name: 'fzf+alias',
-      search: (icons, query) => icons.icones(query, aliasGroups),
+      search: (icons, query) => icons.icones(query, aliasGroups).map(icon => ({ icon })),
     },
     predictorMethod('fzf+table', table),
   ]
@@ -68,7 +69,7 @@ export function baselineMethods(): Method[] {
 export function predictorMethod(name: string, predict: Predictor): Method {
   return {
     name,
-    search: (icons, query) => icons.tiered(query, predict(query)),
+    search: (icons, query) => icons.tieredWithReasons(query, predict(query)),
   }
 }
 
@@ -104,10 +105,11 @@ export function runBenchmark(methods: Method[], cases: BenchCase[] = loadCases()
       if (!lists) {
         const search = searches.get(test.prefix)!
         const typed = new Set(search.icones(test.query))
-        const all = method.search(search, test.query)
+        const matches = method.search(search, test.query)
+        const related = matches.filter(result => !typed.has(result.icon) && !(result.via && isTypedWord(result.via)))
         results.set(key, lists = {
-          all,
-          related: all.filter(name => !typed.has(name)),
+          all: matches.map(result => result.icon),
+          related: related.map(result => result.icon),
         })
       }
       return Math.min(firstCorrect(lists.all, test), firstCorrect(lists.related, test))

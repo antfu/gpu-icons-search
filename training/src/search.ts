@@ -4,6 +4,20 @@ import { extendedMatch, Fzf } from 'fzf'
 /** A function that turns a query into predicted words, best first */
 export type Predictor = (query: string) => Prediction[]
 
+/** An icon name with the prediction that found it. A match of the typed text has no prediction. */
+export interface SearchResult {
+  icon: string
+  via?: Prediction
+}
+
+/**
+ * A correction or a completion stands for the word that the user meant to type.
+ * Its matches belong with the matches of the typed text, before the matches of related words.
+ */
+export function isTypedWord(prediction: Prediction): boolean {
+  return prediction.kind !== 'related'
+}
+
 /**
  * Text search over the icon names of one icon set.
  * It holds the reference integration of predictions with fzf,
@@ -56,14 +70,19 @@ export class IconSearch {
 
   /**
    * The reference integration. The typed text comes first, with fuzzy matching as in Icones.
-   * Then each predicted word follows in score order, as an exact match.
+   * Then each predicted word follows as an exact match: corrections and completions first,
+   * then related words, each group in score order.
    * Each result names the prediction that found it. A match of the typed text has none.
    */
-  tieredWithReasons(query: string, predictions: Prediction[]): { icon: string, via?: Prediction }[] {
+  tieredWithReasons(query: string, predictions: Prediction[]): SearchResult[] {
     const parts = query.trim().toLowerCase().split(' ').filter(Boolean)
-    const merged: { icon: string, via?: Prediction }[] = this.icones(query).map(icon => ({ icon }))
+    const merged: SearchResult[] = this.icones(query).map(icon => ({ icon }))
     const seen = new Set(merged.map(result => result.icon))
-    for (const prediction of predictions) {
+    const ordered = [
+      ...predictions.filter(isTypedWord),
+      ...predictions.filter(prediction => !isTypedWord(prediction)),
+    ]
+    for (const prediction of ordered) {
       const index = parts.indexOf(prediction.from)
       const pattern = index < 0
         ? `'${prediction.word}`
