@@ -266,6 +266,31 @@ Do these tasks:
 - Deploy the playground.
 - Open the Icones pull request that replaces `search-alias.ts`.
 
+## Changes during implementation
+
+The implementation changed these points of the plan. `MODEL_CARD.md` has the current scores.
+
+- The benchmark counts the matches of the typed text and the matches of related words as two lists. The reference integration shows the typed matches first, so one list of 50 results hides every related icon behind them.
+- The matches of a correction or a completion count as typed matches. The integration shows them before the matches of related words.
+- The two icon sets that stay out of training are Phosphor and Bootstrap Icons.
+- Only 8 npm packages contain tags. Feather joined the pinned downloads, which are now 5.
+- The model has no bidirectional scans. It takes a weighted mean of the words of the query and applies one residual layer. Each feature row has a learned weight.
+- The word features are the whole word, the word with each single letter removed, every prefix, and every piece of three characters.
+- The teacher model is `bge-small-en-v1.5`. As a direct predictor it scores below the tag table, so it is not an upper reference. Training uses it with a low weight.
+- The decoder drops a prediction that contains a shorter prediction, because a substring match of the shorter word finds the same icons.
+
+The status of the milestones on 2026-11-20 is:
+
+| Milestone | Status |
+| --- | --- |
+| M0 | Complete, except test set 4. The Claude script exists and waits for an approved credential. |
+| M1 | Complete. The decision point applies: see `MODEL_CARD.md`. |
+| M2 | The runtime, `evaluate` and `promote` are complete. No candidate passes the ship gate, so no model is promoted. |
+| M3 | Complete. The review page is empty until test set 4 exists. |
+| M4 | Not started. It needs the Claude script to run. |
+| M5 | Not started. |
+| M6 | Not started. |
+
 ## Risks
 
 These risks can change the plan:
