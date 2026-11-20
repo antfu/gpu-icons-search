@@ -3,7 +3,7 @@ import type { Predictor } from './search'
 import type { TaggedIcon } from './tags'
 import { loadIconSets, splitWords } from './iconify'
 
-interface RelatedWord {
+export interface RelatedWord {
   word: string
   /** From 0 to 1 */
   score: number
