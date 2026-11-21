@@ -11,6 +11,7 @@
     "bench:teachers": "tsx src/bench/teachers.ts",
     "claude": "tsx src/claude.ts",
     "data": "tsx src/data.ts",
+    "demo": "tsx src/demo.ts",
     "evaluate": "tsx src/evaluate.ts",
     "lint:python": "uv run --locked ruff check torch",
     "lookalike": "tsx src/lookalike.ts",
