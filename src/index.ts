@@ -20,7 +20,7 @@ export interface PredictorOptions {
 export interface PredictOptions {
   /**
    * Most predictions to return.
-   * @default 8
+   * @default 12
    */
   limit?: number
   /**
@@ -77,7 +77,7 @@ export async function createPredictor(options: PredictorOptions = {}): Promise<P
   // Calls share GPU buffers, so each call waits for the one before it
   let queue: Promise<unknown> = Promise.resolve()
 
-  async function predict(query: string, { limit = 8, minScore = 0.3, signal }: PredictOptions = {}): Promise<Prediction[]> {
+  async function predict(query: string, { limit = 12, minScore = 0.3, signal }: PredictOptions = {}): Promise<Prediction[]> {
     const units = queryUnits(splitQuery(query))
     const turn = queue.then(async () => {
       signal?.throwIfAborted()

@@ -19,7 +19,7 @@ export async function loadAliasTable(url: URL | string = new URL('./aliases.json
  * Look up each typed word in the alias table.
  * This needs no GPU, but it knows only whole words: no typos, no half-typed words, no descriptions.
  */
-export function predictFromTable(table: AliasTable, query: string, limit = 8): Prediction[] {
+export function predictFromTable(table: AliasTable, query: string, limit = 12): Prediction[] {
   const words = splitQuery(query)
   const predictions: Prediction[] = []
   for (const from of new Set(words)) {
