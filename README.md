@@ -6,18 +6,43 @@
 [![JSDocs][jsdocs-src]][jsdocs-href]
 [![License][license-src]][license-href]
 
-A small model that runs on WebGPU in the browser. It reads an icon search query and predicts the words that icon sets use for the same thing. For example, `movie` gives `cinema`, `film` and `video`, and the misspelled `calandar` gives `calendar`.
+Search icons by meaning, not just by spelling. A tiny model runs on your GPU, right in the browser, and suggests the words that icon sets use for what the user typed.
 
 ![Four queries, the words that the model predicts for them, and the icons that a text matcher then finds](./.github/assets/demo.png)
 
-The model handles English words, short phrases, half-typed words and typos. It only predicts words. Your own text matcher, for example fzf, still finds the icons. [Icones](https://github.com/antfu-collective/icones) is the first intended user: the predictions replace its manual alias list.
+| You type | The model suggests |
+| --- | --- |
+| `movie` | `cinema`, `film`, `video` |
+| `calandar` | `calendar` |
+| `hom` | `house`, `property`, `roof` |
 
-On the benchmark of this repository, the search finds a correct icon on the first screen for 53.6% of the queries. The current Icones search finds one for 27.5%.
+It copes with plain words, short phrases, half-typed words and typos.
 
-> [!WARNING]
-> This project is experimental and not published to npm yet. See [MODEL_CARD.md](./MODEL_CARD.md) for the scores and the limits of the current model.
+## Why
 
-## Usage
+Icon sets name the same thing in different ways. Someone who types `movie` may never find the icon called `film`. Until now, the fix was a hand-written alias list that someone had to keep up to date.
+
+This model replaces that list. It only suggests words. Your own text matcher (for example [fzf](https://github.com/ajitid/fzf-for-js)) still finds the icons, so it fits into any search you already have. [Icones](https://github.com/antfu-collective/icones) is the first intended user.
+
+## How good is it?
+
+We measure how often the first screen of results holds a correct icon.
+
+| Search | Correct icon on the first screen |
+| --- | --- |
+| Icones today | 27.5% |
+| With this model | 53.6% |
+
+> [!NOTE]
+> This project is experimental. [MODEL_CARD.md](./MODEL_CARD.md) has the full scores and the limits of the current model.
+
+## Install
+
+```sh
+npm install gpu-icons-search
+```
+
+## Quick start
 
 ```ts
 import { predict } from 'gpu-icons-search'
@@ -31,11 +56,13 @@ const predictions = await predict('hom')
 // ]
 ```
 
-The result has up to 12 words, best first. A word that contains the typed text, such as `home` here, is left out, because a text matcher finds its icons already.
+- You get a short list of words, best first.
+- Words that already contain what the user typed (like `home`) are left out, because your matcher finds them anyway.
+- The model loads on the first call. If the browser has no WebGPU, the call rejects.
 
-`predict` loads the model on the first call. It rejects if WebGPU is not available. Every predicted word comes from a built-in list of words that occur in Iconify icon names.
+### More control
 
-Create your own predictor to control the weight file, the GPU device and the lifetime:
+Create your own predictor to choose the weight file and decide when to free the GPU.
 
 ```ts
 import { createPredictor, isSupported } from 'gpu-icons-search'
@@ -48,11 +75,11 @@ if (isSupported()) {
 }
 ```
 
-Abort a call when the user presses the next key. The call then rejects and its result is dropped.
+Abort a call when the user presses the next key. The old result is then dropped.
 
-## Use the predictions with fzf
+## Use it with fzf
 
-Run your matcher on the typed text first. Then run it on each predicted word as an exact match, in score order. This keeps the matches of the typed text on top.
+The idea: search for what the user typed first, then add the matches for each suggested word. The user's own words stay on top.
 
 ```ts
 import { extendedMatch, Fzf } from 'fzf'
@@ -71,11 +98,11 @@ async function search(query: string): Promise<string[]> {
 }
 ```
 
-`training/src/search.ts` holds the full reference integration, which also replaces a single word of a longer query.
+`training/src/search.ts` has a fuller example that also handles longer queries.
 
-## Without WebGPU
+## Browsers without WebGPU
 
-The package has no CPU version of the model. For browsers without WebGPU, it ships a static table with the predictions of the model for common words. The table knows whole words only: no typos, no half-typed words, no descriptions.
+There is no CPU version of the model. Instead, the package includes a ready-made table of suggestions for common words. It is less smart: whole words only, with no typos and no half-typed words.
 
 ```ts
 import { isSupported, predict } from 'gpu-icons-search'
@@ -90,22 +117,28 @@ async function predictAnywhere(query: string) {
 
 ## How it works
 
-1. The CPU splits the query into words and hashes each word to rows of a feature table.
-2. A WGSL shader turns the rows into one vector per word and one for the whole query.
-3. A second shader compares each vector with the vector of every word in the word list.
-4. A third shader keeps the best words, and the CPU reads them back.
+In short, the model turns words into points in a space where similar meanings sit close together. It then looks up the nearest known icon words.
 
-The weights use 6 bits each. The weight file with the word list is below 1 MB.
+| Step | Where | What happens |
+| --- | --- | --- |
+| Split | CPU | Cut the query into words and look each one up with a hash |
+| Understand | GPU | Turn each word, and the whole query, into a vector |
+| Compare | GPU | Score the vector against every word in the word list |
+| Pick | GPU, then CPU | Keep the best words and read them back |
+
+The model is small on purpose. Its weights are compressed hard, so the whole download, word list included, is under 1 MB and has no runtime dependencies.
 
 ## Development
 
 The repository has three parts:
 
-- The root is the published package: the WebGPU runtime in `src/`.
-- `training/` holds the data pipeline, the benchmark and the PyTorch training loop.
-- `playground/` compares the model with the current Icones search.
+| Folder | Purpose |
+| --- | --- |
+| `/` (root) | The published package: the WebGPU runtime in `src/` |
+| `training/` | Data pipeline, benchmark and PyTorch training |
+| `playground/` | Side-by-side comparison with the Icones search |
 
-Install Node.js 22 or later, pnpm, and [uv](https://docs.astral.sh/uv/) for the Python part. On Linux without a GPU, also install Playwright Chromium: the scripts use its software Vulkan driver for WebGPU.
+You need Node.js 22 or later, pnpm, and [uv](https://docs.astral.sh/uv/) for the Python part. On Linux without a GPU, also install Playwright Chromium: it gives WebGPU a software driver.
 
 ```sh
 pnpm install
@@ -117,9 +150,9 @@ pnpm promote    # copy the candidate into weights/ if it passes the ship gate
 pnpm play       # start the playground
 ```
 
-`pnpm -C training run demo` writes the page behind the image at the top of this file. The image is a screenshot of that page.
+`pnpm -C training run demo` builds the page behind the image at the top of this file.
 
-[PLAN.md](./PLAN.md) records the design decisions. [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md) lists the training data and its licenses.
+More reading: [PLAN.md](./PLAN.md) for design decisions, [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md) for training data and licenses.
 
 ## Prior art
 
@@ -131,10 +164,10 @@ Three projects showed that a small trained model with a hand-written WebGPU runt
 
 These ideas come from them:
 
-- A model of about 1 MB or less, with WGSL shaders written for that one model and no runtime dependencies.
-- Hashed features of each word in place of a word list on the input side.
-- Weights of 6 bits each, with training that rounds the weights in its last steps.
-- A candidate that must match the training framework on real WebGPU and pass a benchmark before it replaces the shipped weights.
+- A tiny model with shaders written for that one model and no runtime dependencies.
+- Hashed word features, so the input needs no word list.
+- Heavily compressed weights, with training that adapts to the compression.
+- A new model must match the training framework on real WebGPU and pass a benchmark before it ships.
 
 The task differs. Those models give each word of the input a label. This model finds the closest words in a word list.
 
