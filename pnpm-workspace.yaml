@@ -23,8 +23,12 @@ packages:
   - examples/*
 
 allowBuilds:
+  '@carbon/icons': true
   esbuild: true
+  onnxruntime-node: true
+  protobufjs: true
   simple-git-hooks: true
+  webgpu: true
 
 catalogs:
   agentic:
