@@ -111,6 +111,31 @@ pnpm play       # start the playground
 
 [PLAN.md](./PLAN.md) records the design decisions. [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md) lists the training data and its licenses.
 
+## Prior art
+
+Three projects showed that a small trained model with a hand-written WebGPU runtime can replace hand-written rules. This project follows their approach:
+
+- [gpu-lexer](https://github.com/vercel-labs/gpu-lexer) by Shu Ding: a syntax highlighter for every language.
+- [gpu-time](https://github.com/arikchakma/gpu-time) by Arik Chakma: a parser for date and time expressions.
+- [gpu-cron](https://github.com/manuschillerdev/gpu-cron) by Manu Schiller: a parser for recurring schedules.
+
+These ideas come from them:
+
+- A model of about 1 MB or less, with WGSL shaders written for that one model and no runtime dependencies.
+- Hashed features of each word in place of a word list on the input side.
+- Weights of 6 bits each, with training that rounds the weights in its last steps.
+- A candidate that must match the training framework on real WebGPU and pass a benchmark before it replaces the shipped weights.
+
+The task differs. Those models give each word of the input a label. This model finds the closest words in a word list.
+
+The project also builds on:
+
+- [Icones](https://github.com/antfu-collective/icones): its manual alias list is the problem that this model solves, and a test set of the benchmark.
+- [Iconify](https://iconify.design/): the icon names and the word list come from its icon sets.
+- [fzf for JavaScript](https://github.com/ajitid/fzf-for-js): the text matcher of Icones and of the reference integration.
+
+The code, the training data pipeline and the weights of this project are original.
+
 ## Sponsors
 
 <p align="center">
