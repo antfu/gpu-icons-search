@@ -65,35 +65,57 @@ async function setVerdict(test: BenchCase, verdict: Verdict): Promise<void> {
     No written test queries yet. Run <code>pnpm -C training claude submit written</code>, then <code>collect written</code>, and restart the playground.
   </p>
   <section v-else class="panel p-4">
-    <h2 class="mb-1 text-sm font-semibold">
-      Written test queries
-    </h2>
-    <p class="mb-3 text-xs muted">
-      Mark a query as wrong if a user would not type it for this icon. {{ Object.keys(verdicts).length }} of {{ cases.length }} reviewed. {{ saved }}
+    <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+      <h2 class="section-title">
+        Written test queries
+      </h2>
+      <span class="badge">{{ Object.keys(verdicts).length }} / {{ cases.length }} reviewed</span>
+    </div>
+    <div class="mt-2 h-1 overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
+      <div class="h-full bg-teal-500 transition-all" :style="{ width: `${Object.keys(verdicts).length / cases.length * 100}%` }" />
+    </div>
+    <p class="mb-2 mt-2 text-xs muted">
+      Mark a query as wrong if a user would not type it for this icon. {{ saved }}
     </p>
     <div
       v-for="test in cases"
       :key="key(test)"
-      class="flex items-center gap-3 border-t border-neutral-200 py-2 dark:border-neutral-800"
+      class="flex items-center gap-3 border-t border-base py-2.5"
     >
-      <iconify-icon :icon="`${test.prefix}:${test.icon}`" width="28" height="28" />
+      <div class="h-10 w-10 flex shrink-0 items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-800">
+        <iconify-icon :icon="`${test.prefix}:${test.icon}`" width="24" height="24" />
+      </div>
       <div class="min-w-0 flex-1">
-        <button class="font-mono hover:underline" @click="emit('open', test)">
+        <button class="text-left font-mono hover:underline" @click="emit('open', test)">
           {{ test.query }}
         </button>
-        <div class="text-xs muted">
+        <div class="truncate text-xs muted">
           {{ test.prefix }}:{{ test.icon }}
           <template v-if="ranks[key(test)] !== undefined">
-            , {{ ranks[key(test)] ? `found at rank ${ranks[key(test)]}` : 'not found' }}
+            · <span :class="ranks[key(test)] ? 'accent' : ''">{{ ranks[key(test)] ? `rank ${ranks[key(test)]}` : 'not found' }}</span>
           </template>
         </div>
       </div>
-      <button class="tab" :class="verdicts[key(test)] === 'keep' ? 'tab-active' : ''" @click="setVerdict(test, 'keep')">
-        Keep
-      </button>
-      <button class="tab" :class="verdicts[key(test)] === 'wrong' ? 'tab-active' : ''" @click="setVerdict(test, 'wrong')">
-        Wrong
-      </button>
+      <div class="segmented shrink-0">
+        <button
+          class="segment px-2.5"
+          :class="verdicts[key(test)] === 'keep' ? 'segment-active !text-teal-700 dark:!text-teal-400' : ''"
+          title="Keep"
+          @click="setVerdict(test, 'keep')"
+        >
+          <iconify-icon icon="ph:check-bold" class="sm:hidden" width="16" height="16" />
+          <span class="hidden sm:inline">Keep</span>
+        </button>
+        <button
+          class="segment px-2.5"
+          :class="verdicts[key(test)] === 'wrong' ? 'segment-active !text-red-600 dark:!text-red-400' : ''"
+          title="Wrong"
+          @click="setVerdict(test, 'wrong')"
+        >
+          <iconify-icon icon="ph:x-bold" class="sm:hidden" width="16" height="16" />
+          <span class="hidden sm:inline">Wrong</span>
+        </button>
+      </div>
     </div>
   </section>
 </template>

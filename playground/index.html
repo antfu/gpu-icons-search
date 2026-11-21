@@ -2,15 +2,22 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />
     <title>gpu-icons-search playground</title>
     <style>
-      body { margin: 0; }
-      button { border: 0; background: none; color: inherit; font: inherit; }
+      :root { color-scheme: light dark; }
+      *, ::before, ::after { box-sizing: border-box; border: 0 solid; }
+      body { margin: 0; -webkit-tap-highlight-color: transparent; }
+      button { padding: 0; background: none; color: inherit; font: inherit; }
+      h1, h2, p, dl, dd, ul { margin: 0; padding: 0; }
+      ul { list-style: none; }
       table { border-collapse: collapse; }
+      iconify-icon { display: inline-block; }
     </style>
   </head>
-  <body class="bg-neutral-50 text-neutral-900 dark:bg-neutral-950 dark:text-neutral-100">
+  <body class="bg-neutral-50 text-neutral-900 antialiased dark:bg-neutral-950 dark:text-neutral-100">
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
   </body>
