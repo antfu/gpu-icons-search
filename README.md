@@ -6,9 +6,13 @@
 [![JSDocs][jsdocs-src]][jsdocs-href]
 [![License][license-src]][license-href]
 
-A small model that runs on WebGPU and predicts related icon words for a search query. For example, `hom` gives `home` and `house`. It handles English keywords, short descriptions, half-typed words and typos.
+A small model that runs on WebGPU in the browser. It reads an icon search query and predicts the words that icon sets use for the same thing. For example, `movie` gives `cinema`, `film` and `video`, and the misspelled `calandar` gives `calendar`.
 
-The model only predicts words. Your own text matcher, for example fzf, still finds the icons. [Icones](https://github.com/antfu-collective/icones) is the first intended user: the predictions replace its manual alias list.
+![Four queries, the words that the model predicts for them, and the icons that a text matcher then finds](./.github/assets/demo.png)
+
+The model handles English words, short phrases, half-typed words and typos. It only predicts words. Your own text matcher, for example fzf, still finds the icons. [Icones](https://github.com/antfu-collective/icones) is the first intended user: the predictions replace its manual alias list.
+
+On the benchmark of this repository, the search finds a correct icon on the first screen for 53.6% of the queries. The current Icones search finds one for 27.5%.
 
 > [!WARNING]
 > This project is experimental and not published to npm yet. See [MODEL_CARD.md](./MODEL_CARD.md) for the scores and the limits of the current model.
@@ -20,10 +24,14 @@ import { predict } from 'gpu-icons-search'
 
 const predictions = await predict('hom')
 // [
-//   { word: 'home', score: 0.43, from: 'hom', kind: 'completion' },
-//   { word: 'house', score: 0.42, from: 'hom', kind: 'related' },
+//   { word: 'house', score: 0.45, from: 'hom', kind: 'related' },
+//   { word: 'property', score: 0.39, from: 'hom', kind: 'related' },
+//   { word: 'roof', score: 0.39, from: 'hom', kind: 'related' },
+//   ...
 // ]
 ```
+
+The result has up to 12 words, best first. A word that contains the typed text, such as `home` here, is left out, because a text matcher finds its icons already.
 
 `predict` loads the model on the first call. It rejects if WebGPU is not available. Every predicted word comes from a built-in list of words that occur in Iconify icon names.
 
@@ -108,6 +116,8 @@ pnpm evaluate   # run the candidate on real WebGPU and score it
 pnpm promote    # copy the candidate into weights/ if it passes the ship gate
 pnpm play       # start the playground
 ```
+
+`pnpm -C training run demo` writes the page behind the image at the top of this file. The image is a screenshot of that page.
 
 [PLAN.md](./PLAN.md) records the design decisions. [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md) lists the training data and its licenses.
 
