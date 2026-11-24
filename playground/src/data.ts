@@ -1,9 +1,9 @@
-import type { Prediction, Predictor } from 'gpu-icons-search'
+import type { Backend, Prediction, Predictor } from 'gpu-icons-search'
 import type { AliasTable } from 'gpu-icons-search/fallback'
 import type { BenchCase } from '../../training/src/bench/cases'
 import type { Evaluation } from '../../training/src/evaluate'
 import type { SweepEntry } from '../../training/src/sweep'
-import { createPredictor, isSupported } from 'gpu-icons-search'
+import { createPredictor } from 'gpu-icons-search'
 import { loadAliasTable, predictFromTable } from 'gpu-icons-search/fallback'
 import { IconSearch } from '../../training/src/search'
 
@@ -13,8 +13,8 @@ export interface IconSetInfo {
   total: number
 }
 
-/** How the playground gets predictions: from the model on WebGPU, from the alias table, or not at all */
-type PredictMode = 'webgpu' | 'table' | 'none'
+/** How the playground gets predictions: from the model on WebGPU or on the CPU, from the alias table, or not at all */
+type PredictMode = Backend | 'table' | 'none'
 
 async function fetchJSON<T>(path: string): Promise<T | undefined> {
   const response = await fetch(`${import.meta.env.BASE_URL}data/${path}`)
@@ -79,10 +79,8 @@ async function tableSource(note: string): Promise<PredictSource> {
   }
 }
 
-/** Load the model on WebGPU, or fall back to the static alias table */
+/** Load the model. If it does not load, fall back to the static alias table. */
 export async function loadPredictSource(): Promise<PredictSource> {
-  if (!isSupported())
-    return tableSource('This browser has no WebGPU.')
   let predictor: Predictor
   try {
     predictor = await createPredictor({ weights: `${import.meta.env.BASE_URL}data/model.bin` })
@@ -91,7 +89,7 @@ export async function loadPredictSource(): Promise<PredictSource> {
     return tableSource(`The model did not load: ${String(error)}`)
   }
   return {
-    mode: 'webgpu',
+    mode: predictor.backend,
     predict: (query, limit, signal) => predictor.predict(query, { limit, signal }),
   }
 }
