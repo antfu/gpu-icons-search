@@ -1,7 +1,7 @@
 {
   "name": "gpu-icons-search",
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "packageManager": "pnpm@12.21.0",
   "description": "Tiny model that predicts related icon words for a search query, on the CPU or WebGPU",
   "author": "Anthony Fu <anthonyfu117@hotmail.com>",
