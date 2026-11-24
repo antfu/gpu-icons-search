@@ -16,15 +16,18 @@ export interface PredictOptions {
 export interface Predictor {
   predict: (_: string, _?: PredictOptions) => Promise<Prediction[]>;
   readonly vocabulary: readonly string[];
+  readonly backend: Backend;
   dispose: () => void;
 }
 export interface PredictorOptions {
   weights?: ArrayBuffer | URL | string;
+  backend?: Backend | 'auto';
   device?: GPUDevice;
 }
 // #endregion
 
 // #region Types
+export type Backend = 'webgpu' | 'cpu';
 export type PredictionKind = 'completion' | 'correction' | 'related';
 // #endregion
 

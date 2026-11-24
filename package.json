@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.1.0",
   "packageManager": "pnpm@12.21.0",
-  "description": "Tiny WebGPU model that predicts related icon words for a search query",
+  "description": "Tiny model that predicts related icon words for a search query, on WebGPU or the CPU",
   "author": "Anthony Fu <anthonyfu117@hotmail.com>",
   "license": "MIT",
   "funding": "https://github.com/sponsors/antfu",

@@ -1,5 +1,6 @@
 import type { Prediction } from './types'
 import type { ModelWeights } from './weights'
+import { CpuModel } from './cpu'
 import { decodePredictions, queryUnits } from './decode'
 import { splitQuery } from './features'
 import { GpuModel } from './runtime'
@@ -7,13 +8,26 @@ import { parseWeights } from './weights'
 
 export type { Prediction, PredictionKind } from './types'
 
+/** Where the model runs */
+export type Backend = 'webgpu' | 'cpu'
+
 export interface PredictorOptions {
   /**
    * The weight file, or a URL to fetch it from.
    * The default is the file that ships with the package.
    */
   weights?: ArrayBuffer | URL | string
-  /** A device to run on. The default asks `navigator.gpu` for one. */
+  /**
+   * Where the model runs. Both backends give the same predictions, apart from float rounding.
+   *
+   * - `auto`: on WebGPU if the environment has a usable GPU, and on the CPU if not
+   * - `webgpu`: on WebGPU. `createPredictor` rejects if there is no usable GPU.
+   * - `cpu`: on the CPU, in plain JavaScript
+   *
+   * @default 'auto'
+   */
+  backend?: Backend | 'auto'
+  /** A device for the WebGPU backend. The default asks `navigator.gpu` for one. */
   device?: GPUDevice
 }
 
@@ -37,11 +51,13 @@ export interface Predictor {
   predict: (query: string, options?: PredictOptions) => Promise<Prediction[]>
   /** The built-in word list. Every prediction is one of these words. */
   readonly vocabulary: readonly string[]
-  /** Free the GPU buffers. The predictor cannot be used after this. */
+  /** Where this predictor runs the model */
+  readonly backend: Backend
+  /** Free the GPU buffers, if there are any. The predictor cannot be used after this. */
   dispose: () => void
 }
 
-/** Tell if this environment has WebGPU. Without it, `createPredictor` rejects. */
+/** Tell if this environment has WebGPU. Without it, the model runs on the CPU. */
 export function isSupported(): boolean {
   return typeof navigator !== 'undefined' && 'gpu' in navigator
 }
@@ -64,17 +80,30 @@ async function loadWeights(source: PredictorOptions['weights']): Promise<ModelWe
   return parseWeights(await response.arrayBuffer())
 }
 
+/** Find the device of the WebGPU backend, or nothing if the model runs on the CPU */
+async function resolveDevice({ backend = 'auto', device }: PredictorOptions): Promise<GPUDevice | undefined> {
+  if (backend === 'cpu')
+    return undefined
+  if (device)
+    return device
+  return backend === 'webgpu'
+    ? requestDevice()
+    : requestDevice().catch(() => undefined)
+}
+
 /**
- * Load the model on the GPU.
- * This downloads the weight file, compiles the shaders and uploads the weights.
+ * Load the model.
+ * This downloads the weight file. On WebGPU, it also compiles the shaders and uploads the weights.
  */
 export async function createPredictor(options: PredictorOptions = {}): Promise<Predictor> {
   const [device, weights] = await Promise.all([
-    options.device ?? requestDevice(),
+    resolveDevice(options),
     loadWeights(options.weights),
   ])
-  const model = new GpuModel(device, weights)
-  // Calls share GPU buffers, so each call waits for the one before it
+  const model = device
+    ? new GpuModel(device, weights)
+    : new CpuModel(weights)
+  // Calls on the GPU share buffers, so each call waits for the one before it
   let queue: Promise<unknown> = Promise.resolve()
 
   async function predict(query: string, { limit = 12, minScore = 0.3, signal }: PredictOptions = {}): Promise<Prediction[]> {
@@ -94,6 +123,9 @@ export async function createPredictor(options: PredictorOptions = {}): Promise<P
   return {
     predict,
     vocabulary: weights.vocabulary,
+    backend: device
+      ? 'webgpu'
+      : 'cpu',
     dispose: () => model.destroy(),
   }
 }
@@ -102,7 +134,7 @@ let shared: Promise<Predictor> | undefined
 
 /**
  * Predict related words with a shared predictor that loads on the first call.
- * It rejects if WebGPU is not available.
+ * It runs on WebGPU if the environment has a usable GPU, and on the CPU if not.
  */
 export async function predict(query: string, options?: PredictOptions): Promise<Prediction[]> {
   shared ??= createPredictor()
