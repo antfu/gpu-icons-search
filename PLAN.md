@@ -33,7 +33,7 @@ The maintainer made these decisions in the interview:
 | Words it can predict | Only words from a built-in Iconify word list that ships with the package. |
 | Input per icon | None. The model sees text only, so new icons need no retraining. |
 | Output | Ranked words with scores. Each one names the typed word that produced it. |
-| Without WebGPU | No CPU inference. The package ships a static alias table that the model generates at release time. |
+| Without WebGPU | The model runs on the CPU. The first decision was no CPU inference and only a static alias table. It changed on 2026-11-24: see the list of changes below. |
 | Size | About 1 MB compressed at most, downloaded on first use. |
 | Host integration | fzf runs on the typed text first. Then fzf runs on each predicted word as an exact match, in score order. |
 | Training engine | PyTorch, for the training loop only. uv manages Python with a lockfile. |
@@ -94,13 +94,13 @@ The reference integration with fzf lives in `training/` and in the playground. I
 2. For each predicted word in score order, run fzf with an exact match.
 3. Append the new results and drop the duplicates.
 
-If WebGPU is not available, `predict` rejects. The host then loads the static alias table and looks up each typed word.
+If WebGPU is not available, the model runs on the CPU. A host that does not want to download the model can load the static alias table and look up each typed word.
 
 These rules apply to the published package:
 
 - The package MUST NOT have runtime dependencies.
-- The package MUST NOT contain CPU inference code.
-- The TypeScript reference implementation MUST stay in the tests and in `training/`.
+- The CPU runtime and the WGSL runtime MUST give the same scores within the parity tolerance.
+- The CPU runtime MUST stay plain TypeScript. It is also the reference implementation of `training/`.
 
 ## The model
 
@@ -280,6 +280,7 @@ The implementation changed these points of the plan. `MODEL_CARD.md` has the cur
 - The decoder drops a prediction that contains a shorter prediction, because a substring match of the shorter word finds the same icons.
 - The ship gate compares the `alias` test set with `fzf+table`, not with `fzf+alias`. That test set is the alias list of `fzf+alias` itself, and the best model finds 71.5% of it. The maintainer made this decision after the stage 2 results.
 - The alias table for browsers without WebGPU is 188 KB, or 67 KB with gzip. The plan estimated about 40 KB.
+- Since 2026-11-24 the package has a CPU runtime. One short query is a small job: the CPU needs about 1 ms for it, which is in the same range as a GPU call. A package that needs WebGPU also does not reach every browser. `createPredictor` uses WebGPU if it is available and the CPU if not. The reference implementation moved from `training/` into the package and is that CPU runtime. The alias table stays as a smaller download.
 
 The status of the milestones on 2026-11-20 is:
 

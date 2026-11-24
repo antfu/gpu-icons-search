@@ -15,7 +15,7 @@ The model has 1,033,378 parameters. The two large tables use 6 bits per weight.
 3. A learned gate gives each word of the query a weight. The weighted mean of the word vectors goes through one residual layer with 64 hidden units.
 4. The score of a target word is the cosine between that result and the row of the word in a second table. The second table has one row for each of the 15,265 words of the built-in word list.
 
-The model runs once for the whole query, and once for each word of a longer query. The runtime is three WGSL compute passes with no dependencies: `encode`, `score` and `select`. The package has no CPU version of the model.
+The model runs once for the whole query, and once for each word of a longer query. The package has two runtimes with no dependencies. The WebGPU runtime is three WGSL compute passes: `encode`, `score` and `select`. The CPU runtime does the same steps in plain TypeScript. The training scripts use the CPU runtime as their reference implementation.
 
 ## Training
 
@@ -58,15 +58,20 @@ The ship gate gives this result:
 | `typing` not below `fzf+alias` | Pass |
 | `written` not below `fzf+alias` | Pass |
 | WebGPU output matches the PyTorch fixtures | Pass: the largest difference is 0.00005, on Apple Metal |
+| CPU output matches the PyTorch fixtures | Pass: the largest difference is 0.00005 |
 | Compressed size within 1 MB | Pass: 842,280 bytes with Brotli |
 
 The `alias` test set comes from the manual alias list of Icones. The `fzf+alias` baseline uses that same list, so it holds the answers of this test set. The maintainer decided on 2026-11-20 to compare this set with `fzf+table` instead. The model finds 76.4% of the alias pairs, and the manual list finds 93.2%. A host that replaces the manual list with the model loses that difference.
 
 Other measurements:
 
-- A warm `predict` call takes 2.04 ms on Apple Metal (M4), in Node.
+- A warm `predict` call on WebGPU takes 2.04 ms on Apple Metal (M4), in Node.
+- A warm `predict` call on the CPU takes 0.93 ms. This is the median of the 2,796 benchmark queries in Node 22, in a Linux arm64 virtual machine. On the same machine, WebGPU on SwiftShader takes 1.43 ms.
+- A query of 12 words is the longest that the model reads. The CPU runtime needs about 8 ms for it, because it scores the word list 13 times.
+- In headless Chromium 158 on the same machine, a CPU call takes 0.6 ms for a short query and 7.5 ms for a query of 12 words. That browser has `navigator.gpu` and no usable adapter, so the default backend selects the CPU.
+- The CPU runtime and the WebGPU runtime agree on those queries. The largest score difference is 0.0000003. For 2 queries, two words with equal scores change places.
 - The weight file is 960,672 bytes. The word list takes about 100,000 of them.
-- The alias table for browsers without WebGPU is 188,462 bytes, or 67,486 bytes with gzip. It covers the 4,000 most frequent words.
+- The alias table, a smaller download for hosts that do not load the model, is 188,462 bytes, or 67,486 bytes with gzip. It covers the 4,000 most frequent words.
 - For the stage 1 candidate and 600 common words, the intended word is in the top 8 predictions for 89% of the prefixes and for 34% of the misspellings.
 
 `training/data/sweep.json` compares three model sizes at 8,000 steps with stage 1 data. The scores rise with the size up to the 1 MB limit.
@@ -124,6 +129,7 @@ The `alias` score stays below the manual list. Two changes of the integration ca
 - The model knows English only.
 - A word outside the built-in word list is never predicted.
 - The tests ran on a software GPU in Node and in headless Chromium. Nobody tested a browser on a real GPU, Safari or Firefox.
+- The CPU runtime is measured in Node and in headless Chromium on a desktop processor. Nobody measured it on a phone.
 
 ## Reproduce
 
