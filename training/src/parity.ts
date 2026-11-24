@@ -1,11 +1,11 @@
-import type { ModelWeights } from '../../src/weights'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import process from 'node:process'
+import { CpuModel } from '../../src/cpu'
 import { GpuModel } from '../../src/runtime'
 import { requestNodeDevice, useSoftwareVulkanIfNeeded } from './gpu'
 import { cacheDir, readJSON } from './paths'
-import { encodeUnit, loadModel, topWords } from './reference'
+import { loadModel } from './reference'
 
 /** Scores of two runtimes can differ by this much: float32 rounding and four stored decimals */
 export const TOLERANCE = 2e-4
@@ -32,12 +32,9 @@ export async function compareWithFixtures(dir: string, top: TopWords): Promise<n
   return worst
 }
 
-export function referenceTop(model: ModelWeights): TopWords {
-  return words => topWords(model, encodeUnit(model, words), 16)
-}
-
-export function gpuTop(gpu: GpuModel): TopWords {
-  return async words => gpu.run([
+/** The best words of a runtime for one bag of words */
+export function modelTop(model: CpuModel | GpuModel): TopWords {
+  return async words => model.run([
     {
       words,
       from: words.join(' '),
@@ -46,7 +43,7 @@ export function gpuTop(gpu: GpuModel): TopWords {
 }
 
 /**
- * Compare the reference implementation and the WGSL runtime with the PyTorch fixtures of a candidate.
+ * Compare the CPU runtime and the WGSL runtime with the PyTorch fixtures of a candidate.
  * Usage: tsx src/parity.ts [candidate folder]
  */
 async function main(): Promise<void> {
@@ -56,8 +53,8 @@ async function main(): Promise<void> {
   const { device, adapter } = await requestNodeDevice()
   const gpu = new GpuModel(device, model)
   const results = {
-    reference: await compareWithFixtures(dir, referenceTop(model)),
-    webgpu: await compareWithFixtures(dir, gpuTop(gpu)),
+    reference: await compareWithFixtures(dir, modelTop(new CpuModel(model))),
+    webgpu: await compareWithFixtures(dir, modelTop(gpu)),
   }
   gpu.destroy()
   console.log(`adapter: ${adapter}`)

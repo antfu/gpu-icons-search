@@ -6,11 +6,12 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import process from 'node:process'
 import { brotliCompressSync, gzipSync } from 'node:zlib'
+import { CpuModel } from '../../src/cpu'
 import { createPredictor } from '../../src/index'
 import { GpuModel } from '../../src/runtime'
 import { baselineMethods, loadCases, predictorMethod, printReport, runBenchmark, SCREEN } from './bench/run'
 import { requestNodeDevice, useSoftwareVulkanIfNeeded } from './gpu'
-import { compareWithFixtures, gpuTop, referenceTop, TOLERANCE } from './parity'
+import { compareWithFixtures, modelTop, TOLERANCE } from './parity'
 import { cacheDir, writeJSON } from './paths'
 import { loadModel } from './reference'
 
@@ -22,7 +23,7 @@ export interface Evaluation {
   sha256: string
   /** The GPU adapter that ran the WGSL shaders */
   adapter: string
-  /** Largest score difference to the PyTorch fixtures, per runtime */
+  /** Largest score difference to the PyTorch fixtures, per runtime. `reference` is the CPU runtime. */
   parity: { reference: number, webgpu: number, tolerance: number }
   /** Size of the weight file, raw and compressed */
   bytes: { raw: number, gzip: number, brotli: number }
@@ -52,8 +53,8 @@ async function main(): Promise<void> {
   const model = loadModel(dir)
   const gpu = new GpuModel(device, model)
   const parity = {
-    reference: await compareWithFixtures(dir, referenceTop(model)),
-    webgpu: await compareWithFixtures(dir, gpuTop(gpu)),
+    reference: await compareWithFixtures(dir, modelTop(new CpuModel(model))),
+    webgpu: await compareWithFixtures(dir, modelTop(gpu)),
     tolerance: TOLERANCE,
   }
   gpu.destroy()
@@ -92,7 +93,7 @@ async function main(): Promise<void> {
 
   printReport(bench)
   console.log(`\nadapter   ${adapter}`)
-  console.log(`parity    reference ${parity.reference.toExponential(1)}, webgpu ${parity.webgpu.toExponential(1)} (tolerance ${TOLERANCE})`)
+  console.log(`parity    cpu ${parity.reference.toExponential(1)}, webgpu ${parity.webgpu.toExponential(1)} (tolerance ${TOLERANCE})`)
   console.log(`size      ${evaluation.bytes.raw} bytes raw, ${evaluation.bytes.gzip} gzip, ${evaluation.bytes.brotli} brotli`)
   console.log(`latency   ${evaluation.latencyMs} ms median per warm call on this adapter`)
   process.exit(0)
