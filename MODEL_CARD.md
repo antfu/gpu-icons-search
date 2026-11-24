@@ -66,9 +66,9 @@ The `alias` test set comes from the manual alias list of Icones. The `fzf+alias`
 Other measurements:
 
 - A warm `predict` call on WebGPU takes 2.04 ms on Apple Metal (M4), in Node.
-- A warm `predict` call on the CPU takes 0.93 ms. This is the median of the 2,796 benchmark queries in Node 22, in a Linux arm64 virtual machine. On the same machine, WebGPU on SwiftShader takes 1.43 ms.
+- A warm `predict` call on the CPU, the default backend, takes 0.93 ms. This is the median of the 2,796 benchmark queries in Node 22, in a Linux arm64 virtual machine. On the same machine, WebGPU on SwiftShader takes 1.43 ms.
 - A query of 12 words is the longest that the model reads. The CPU runtime needs about 8 ms for it, because it scores the word list 13 times.
-- In headless Chromium 158 on the same machine, a CPU call takes 0.6 ms for a short query and 7.5 ms for a query of 12 words. That browser has `navigator.gpu` and no usable adapter, so the default backend selects the CPU.
+- In headless Chromium 158 on the same machine, a CPU call takes 0.6 ms for a short query and 7.5 ms for a query of 12 words. That browser has `navigator.gpu` and no usable adapter, so the WebGPU backend cannot run there.
 - The CPU runtime and the WebGPU runtime agree on those queries. The largest score difference is 0.0000003. For 2 queries, two words with equal scores change places.
 - The weight file is 960,672 bytes. The word list takes about 100,000 of them.
 - The alias table, a smaller download for hosts that do not load the model, is 188,462 bytes, or 67,486 bytes with gzip. It covers the 4,000 most frequent words.

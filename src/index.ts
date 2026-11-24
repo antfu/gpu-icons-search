@@ -20,14 +20,13 @@ export interface PredictorOptions {
   /**
    * Where the model runs. Both backends give the same predictions, apart from float rounding.
    *
-   * - `auto`: on WebGPU if the environment has a usable GPU, and on the CPU if not
+   * - `cpu`: on the CPU, in plain JavaScript. One query is a small job, so this is fast enough.
    * - `webgpu`: on WebGPU. `createPredictor` rejects if there is no usable GPU.
-   * - `cpu`: on the CPU, in plain JavaScript
    *
-   * @default 'auto'
+   * @default 'cpu', or 'webgpu' if `device` is set
    */
-  backend?: Backend | 'auto'
-  /** A device for the WebGPU backend. The default asks `navigator.gpu` for one. */
+  backend?: Backend
+  /** A device for the WebGPU backend. Without one, that backend asks `navigator.gpu`. */
   device?: GPUDevice
 }
 
@@ -57,7 +56,7 @@ export interface Predictor {
   dispose: () => void
 }
 
-/** Tell if this environment has WebGPU. Without it, the model runs on the CPU. */
+/** Tell if this environment has WebGPU. Only the `webgpu` backend needs it. */
 export function isSupported(): boolean {
   return typeof navigator !== 'undefined' && 'gpu' in navigator
 }
@@ -81,14 +80,10 @@ async function loadWeights(source: PredictorOptions['weights']): Promise<ModelWe
 }
 
 /** Find the device of the WebGPU backend, or nothing if the model runs on the CPU */
-async function resolveDevice({ backend = 'auto', device }: PredictorOptions): Promise<GPUDevice | undefined> {
+async function resolveDevice({ device, backend = device ? 'webgpu' : 'cpu' }: PredictorOptions): Promise<GPUDevice | undefined> {
   if (backend === 'cpu')
     return undefined
-  if (device)
-    return device
-  return backend === 'webgpu'
-    ? requestDevice()
-    : requestDevice().catch(() => undefined)
+  return device ?? requestDevice()
 }
 
 /**
@@ -134,7 +129,7 @@ let shared: Promise<Predictor> | undefined
 
 /**
  * Predict related words with a shared predictor that loads on the first call.
- * It runs on WebGPU if the environment has a usable GPU, and on the CPU if not.
+ * It runs on the CPU. Use `createPredictor` for WebGPU.
  */
 export async function predict(query: string, options?: PredictOptions): Promise<Prediction[]> {
   shared ??= createPredictor()

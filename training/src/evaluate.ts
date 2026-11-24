@@ -59,7 +59,7 @@ async function main(): Promise<void> {
   }
   gpu.destroy()
 
-  const predictor = await createPredictor({ weights, device })
+  const predictor = await createPredictor({ weights, device, backend: 'webgpu' })
   const cases = loadCases()
   const predictions = new Map<string, Prediction[]>()
   const times: number[] = []

@@ -21,7 +21,7 @@ export interface Predictor {
 }
 export interface PredictorOptions {
   weights?: ArrayBuffer | URL | string;
-  backend?: Backend | 'auto';
+  backend?: Backend;
   device?: GPUDevice;
 }
 // #endregion

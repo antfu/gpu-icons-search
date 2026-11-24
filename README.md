@@ -6,7 +6,7 @@
 [![JSDocs][jsdocs-src]][jsdocs-href]
 [![License][license-src]][license-href]
 
-Search icons by meaning, not just by spelling. A tiny model runs right in the browser, on the GPU or on the CPU, and suggests the words that icon sets use for what the user typed.
+Search icons by meaning, not just by spelling. A tiny model runs right in the browser, on the CPU or on the GPU, and suggests the words that icon sets use for what the user typed.
 
 ![Four queries, the words that the model predicts for them, and the icons that a text matcher then finds](./.github/assets/demo.png)
 
@@ -58,17 +58,16 @@ const predictions = await predict('hom')
 
 - You get a short list of words, best first.
 - Words that already contain what the user typed (like `home`) are left out, because your matcher finds them anyway.
-- The model loads on the first call. It runs on WebGPU if the browser has it, and on the CPU if not.
+- The model loads on the first call. It runs on the CPU, so it needs no GPU.
 
 ### More control
 
-Create your own predictor to choose the weight file and decide when to free the GPU.
+Create your own predictor to choose the weight file and the backend.
 
 ```ts
 import { createPredictor } from 'gpu-icons-search'
 
 const predictor = await createPredictor({ weights: '/assets/model.bin' })
-console.log(predictor.backend) // 'webgpu' or 'cpu'
 const controller = new AbortController()
 console.log(await predictor.predict('shoping cart', { limit: 8, signal: controller.signal }))
 predictor.dispose()
@@ -99,25 +98,28 @@ async function search(query: string): Promise<string[]> {
 
 `training/src/search.ts` has a fuller example that also handles longer queries.
 
-## WebGPU or CPU
+## CPU or WebGPU
 
 The model has two backends. They read the same weight file and give the same predictions.
 
 | `backend` | Where the model runs |
 | --- | --- |
-| `'auto'` (the default) | On WebGPU if the browser has a usable GPU, and on the CPU if not |
-| `'webgpu'` | On WebGPU only. `createPredictor` rejects if there is no usable GPU. |
-| `'cpu'` | On the CPU, in plain JavaScript. It needs no GPU, and it works in workers. |
+| `'cpu'` (the default) | On the CPU, in plain JavaScript. It needs no GPU, and it works in workers. |
+| `'webgpu'` | On WebGPU. `createPredictor` rejects if there is no usable GPU. |
+
+One query is a small job, so the CPU is fast enough. A call takes about 1 ms for a short query, and about 8 ms for the longest query that the model reads. A CPU call blocks its thread for that time. [MODEL_CARD.md](./MODEL_CARD.md) has the measurements.
+
+WebGPU moves that work off the thread. `isSupported()` tells if the environment has WebGPU, but a browser can have WebGPU and no usable GPU, so keep the CPU as the fallback:
 
 ```ts
 import { createPredictor } from 'gpu-icons-search'
 
-const predictor = await createPredictor({ backend: 'cpu' })
+const predictor = await createPredictor({ backend: 'webgpu' })
+  .catch(() => createPredictor())
+console.log(predictor.backend) // 'webgpu' or 'cpu'
 ```
 
-One query is a small job, so the CPU is fast enough. A call takes about 1 ms for a short query, and about 8 ms for the longest query that the model reads. A CPU call blocks its thread for that time. [MODEL_CARD.md](./MODEL_CARD.md) has the measurements.
-
-`isSupported()` tells if the environment has WebGPU. The CPU backend also runs in Node. There, pass the weight file as an `ArrayBuffer`, because Node cannot fetch a file URL.
+Call `predictor.dispose()` to free the GPU buffers. The CPU backend also runs in Node. There, pass the weight file as an `ArrayBuffer`, because Node cannot fetch a file URL.
 
 ### A smaller download
 
@@ -137,9 +139,9 @@ In short, the model turns words into points in a space where similar meanings si
 | Step | Where | What happens |
 | --- | --- | --- |
 | Split | CPU | Cut the query into words and look each one up with a hash |
-| Understand | GPU or CPU | Turn each word, and the whole query, into a vector |
-| Compare | GPU or CPU | Score the vector against every word in the word list |
-| Pick | GPU or CPU | Keep the best words |
+| Understand | CPU or GPU | Turn each word, and the whole query, into a vector |
+| Compare | CPU or GPU | Score the vector against every word in the word list |
+| Pick | CPU or GPU | Keep the best words |
 
 The model is small on purpose. Its weights are compressed hard, so the whole download, word list included, is under 1 MB and has no runtime dependencies.
 
@@ -149,7 +151,7 @@ The repository has three parts:
 
 | Folder | Purpose |
 | --- | --- |
-| `/` (root) | The published package: the WebGPU runtime and the CPU runtime in `src/` |
+| `/` (root) | The published package: the CPU runtime and the WebGPU runtime in `src/` |
 | `training/` | Data pipeline, benchmark and PyTorch training |
 | `playground/` | Side-by-side comparison with the Icones search |
 

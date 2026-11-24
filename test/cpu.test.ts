@@ -55,7 +55,7 @@ describe('cpu backend', () => {
   const weights = file.buffer.slice(file.byteOffset, file.byteOffset + file.byteLength)
 
   it('predicts with the published weights and no GPU', async () => {
-    const predictor = await createPredictor({ weights, backend: 'cpu' })
+    const predictor = await createPredictor({ weights })
     expect(predictor.backend).toBe('cpu')
     const words = async (query: string): Promise<string[]> => (await predictor.predict(query)).map(prediction => prediction.word)
     expect(await words('movie')).toEqual(expect.arrayContaining(['cinema', 'film', 'video']))
@@ -65,8 +65,9 @@ describe('cpu backend', () => {
     predictor.dispose()
   })
 
-  it('falls back to the CPU where WebGPU is missing', async () => {
+  it('is the default, and WebGPU is opt-in', async () => {
     expect((await createPredictor({ weights })).backend).toBe('cpu')
+    // Node has no WebGPU
     await expect(createPredictor({ weights, backend: 'webgpu' })).rejects.toThrow('WebGPU')
   })
 })

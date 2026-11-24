@@ -79,11 +79,17 @@ async function tableSource(note: string): Promise<PredictSource> {
   }
 }
 
-/** Load the model. If it does not load, fall back to the static alias table. */
+/**
+ * Load the model. If it does not load, fall back to the static alias table.
+ * The model runs on the CPU, as in the package. Open the page with `?backend=webgpu` to run it on WebGPU.
+ */
 export async function loadPredictSource(): Promise<PredictSource> {
+  const backend: Backend = new URLSearchParams(location.search).get('backend') === 'webgpu'
+    ? 'webgpu'
+    : 'cpu'
   let predictor: Predictor
   try {
-    predictor = await createPredictor({ weights: `${import.meta.env.BASE_URL}data/model.bin` })
+    predictor = await createPredictor({ weights: `${import.meta.env.BASE_URL}data/model.bin`, backend })
   }
   catch (error) {
     return tableSource(`The model did not load: ${String(error)}`)
