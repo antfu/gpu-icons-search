@@ -28,17 +28,18 @@ onMounted(async () => {
 const status = computed(() => {
   if (!source.value)
     return 'Loading the model'
-  if (source.value.mode === 'webgpu')
-    return 'Model runs on WebGPU'
-  return source.value.mode === 'table'
-    ? 'Static alias table'
-    : 'No predictions'
+  return {
+    webgpu: 'Model runs on WebGPU',
+    cpu: 'Model runs on the CPU',
+    table: 'Static alias table',
+    none: 'No predictions',
+  }[source.value.mode]
 })
 
 const statusColor = computed(() => {
   if (!source.value)
     return 'bg-neutral-400 animate-pulse'
-  return source.value.mode === 'webgpu'
+  return source.value.mode === 'webgpu' || source.value.mode === 'cpu'
     ? 'bg-teal-500'
     : 'bg-amber-500'
 })

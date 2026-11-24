@@ -6,7 +6,7 @@
 [![JSDocs][jsdocs-src]][jsdocs-href]
 [![License][license-src]][license-href]
 
-Search icons by meaning, not just by spelling. A tiny model runs on your GPU, right in the browser, and suggests the words that icon sets use for what the user typed.
+Search icons by meaning, not just by spelling. A tiny model runs right in the browser, on the CPU or on the GPU, and suggests the words that icon sets use for what the user typed.
 
 ![Four queries, the words that the model predicts for them, and the icons that a text matcher then finds](./.github/assets/demo.png)
 
@@ -58,21 +58,19 @@ const predictions = await predict('hom')
 
 - You get a short list of words, best first.
 - Words that already contain what the user typed (like `home`) are left out, because your matcher finds them anyway.
-- The model loads on the first call. If the browser has no WebGPU, the call rejects.
+- The model loads on the first call. It runs on the CPU, so it needs no GPU.
 
 ### More control
 
-Create your own predictor to choose the weight file and decide when to free the GPU.
+Create your own predictor to choose the weight file and the backend.
 
 ```ts
-import { createPredictor, isSupported } from 'gpu-icons-search'
+import { createPredictor } from 'gpu-icons-search'
 
-if (isSupported()) {
-  const predictor = await createPredictor({ weights: '/assets/model.bin' })
-  const controller = new AbortController()
-  console.log(await predictor.predict('shoping cart', { limit: 8, signal: controller.signal }))
-  predictor.dispose()
-}
+const predictor = await createPredictor({ weights: '/assets/model.bin' })
+const controller = new AbortController()
+console.log(await predictor.predict('shoping cart', { limit: 8, signal: controller.signal }))
+predictor.dispose()
 ```
 
 Abort a call when the user presses the next key. The old result is then dropped.
@@ -100,19 +98,38 @@ async function search(query: string): Promise<string[]> {
 
 `training/src/search.ts` has a fuller example that also handles longer queries.
 
-## Browsers without WebGPU
+## CPU or WebGPU
 
-There is no CPU version of the model. Instead, the package includes a ready-made table of suggestions for common words. It is less smart: whole words only, with no typos and no half-typed words.
+The model has two backends. They read the same weight file and give the same predictions.
+
+| `backend` | Where the model runs |
+| --- | --- |
+| `'cpu'` (the default) | On the CPU, in plain JavaScript. It needs no GPU, and it works in workers. |
+| `'webgpu'` | On WebGPU. `createPredictor` rejects if there is no usable GPU. |
+
+One query is a small job, so the CPU is fast enough. A call takes about 1 ms for a short query, and about 8 ms for the longest query that the model reads. A CPU call blocks its thread for that time. [MODEL_CARD.md](./MODEL_CARD.md) has the measurements.
+
+WebGPU moves that work off the thread. `isSupported()` tells if the environment has WebGPU, but a browser can have WebGPU and no usable GPU, so keep the CPU as the fallback:
 
 ```ts
-import { isSupported, predict } from 'gpu-icons-search'
+import { createPredictor } from 'gpu-icons-search'
+
+const predictor = await createPredictor({ backend: 'webgpu' })
+  .catch(() => createPredictor())
+console.log(predictor.backend) // 'webgpu' or 'cpu'
+```
+
+Call `predictor.dispose()` to free the GPU buffers. The CPU backend also runs in Node. There, pass the weight file as an `ArrayBuffer`, because Node cannot fetch a file URL.
+
+### A smaller download
+
+The weight file is about 840 KB compressed. If that is too much, the package also includes a ready-made table of suggestions for common words, at about 67 KB. It is less smart: whole words only, with no typos and no half-typed words.
+
+```ts
 import { loadAliasTable, predictFromTable } from 'gpu-icons-search/fallback'
 
-async function predictAnywhere(query: string) {
-  if (isSupported())
-    return predict(query)
-  return predictFromTable(await loadAliasTable(), query)
-}
+const table = await loadAliasTable()
+console.log(predictFromTable(table, 'movie'))
 ```
 
 ## How it works
@@ -122,9 +139,9 @@ In short, the model turns words into points in a space where similar meanings si
 | Step | Where | What happens |
 | --- | --- | --- |
 | Split | CPU | Cut the query into words and look each one up with a hash |
-| Understand | GPU | Turn each word, and the whole query, into a vector |
-| Compare | GPU | Score the vector against every word in the word list |
-| Pick | GPU, then CPU | Keep the best words and read them back |
+| Understand | CPU or GPU | Turn each word, and the whole query, into a vector |
+| Compare | CPU or GPU | Score the vector against every word in the word list |
+| Pick | CPU or GPU | Keep the best words |
 
 The model is small on purpose. Its weights are compressed hard, so the whole download, word list included, is under 1 MB and has no runtime dependencies.
 
@@ -134,7 +151,7 @@ The repository has three parts:
 
 | Folder | Purpose |
 | --- | --- |
-| `/` (root) | The published package: the WebGPU runtime in `src/` |
+| `/` (root) | The published package: the CPU runtime and the WebGPU runtime in `src/` |
 | `training/` | Data pipeline, benchmark and PyTorch training |
 | `playground/` | Side-by-side comparison with the Icones search |
 

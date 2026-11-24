@@ -101,7 +101,7 @@ function expected(miss: Evaluation['misses'][number]): string {
           Parity with PyTorch
         </dt>
         <dd class="mb-2 sm:mb-0">
-          WebGPU {{ evaluation.parity.webgpu.toExponential(1) }}, reference {{ evaluation.parity.reference.toExponential(1) }}, tolerance {{ evaluation.parity.tolerance }}
+          WebGPU {{ evaluation.parity.webgpu.toExponential(1) }}, CPU {{ evaluation.parity.reference.toExponential(1) }}, tolerance {{ evaluation.parity.tolerance }}
         </dd>
         <dt class="muted">
           Weight file

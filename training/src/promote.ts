@@ -58,7 +58,7 @@ function checkGates(evaluation: Evaluation, floors: Floors): Gate[] {
   }
   const { reference, webgpu, tolerance } = evaluation.parity
   gates.push({ rule: `WebGPU output matches the PyTorch fixtures (${webgpu.toExponential(1)} within ${tolerance})`, pass: webgpu <= tolerance })
-  gates.push({ rule: `reference output matches the PyTorch fixtures (${reference.toExponential(1)} within ${tolerance})`, pass: reference <= tolerance })
+  gates.push({ rule: `CPU output matches the PyTorch fixtures (${reference.toExponential(1)} within ${tolerance})`, pass: reference <= tolerance })
   gates.push({ rule: `compressed size ${evaluation.bytes.brotli} bytes is within ${MAX_COMPRESSED_BYTES}`, pass: evaluation.bytes.brotli <= MAX_COMPRESSED_BYTES })
   return gates
 }
